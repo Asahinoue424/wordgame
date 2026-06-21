@@ -3,747 +3,429 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>实词大闯关 — 公务员考试·实词辨析</title>
+<title>实词大闯关 — 公务员考试·实词辨析1500词</title>
 <style>
-:root {
-  --bg: #0f172a; --card: #1e293b; --card2: #334155;
-  --gold: #f59e0b; --green: #10b981; --red: #ef4444;
-  --blue: #3b82f6; --purple: #8b5cf6; --text: #e2e8f0; --text2: #94a3b8;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
-  background: var(--bg); color: var(--text); min-height: 100vh;
-  display: flex; justify-content: center; align-items: center;
-  user-select: none; -webkit-tap-highlight-color: transparent;
-}
-.app { width: 100%; max-width: 600px; padding: 20px; }
-.screen { display: none; }
-.screen.active { display: block; animation: fadeIn .35s ease; }
-@keyframes fadeIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
-
-/* 首页 */
-.home { text-align: center; padding-top: 40px; }
-.home .logo { font-size: 60px; margin-bottom: 10px; }
-.home h1 { font-size: 36px; background: linear-gradient(135deg, #f59e0b, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 6px; }
-.home .subtitle { color: var(--text2); font-size: 15px; margin-bottom: 36px; }
-.home .stats-bar { display: flex; gap: 20px; justify-content: center; margin-bottom: 36px; flex-wrap: wrap; }
-.home .stat { background: var(--card); border-radius: 16px; padding: 16px 20px; min-width: 80px; }
-.home .stat .num { font-size: 28px; font-weight: 700; color: var(--gold); }
-.home .stat .label { font-size: 12px; color: var(--text2); margin-top: 2px; }
-.btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 14px; font-size: 18px; font-weight: 600; cursor: pointer; margin-bottom: 12px; transition: all .2s; font-family: inherit; color: #fff; }
-.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,.3); }
-.btn:active { transform: scale(.97); }
-.btn.challenge { background: linear-gradient(135deg, #dc2626, #ef4444); }
-.btn.practice { background: linear-gradient(135deg, #2563eb, #3b82f6); }
-.btn.review { background: linear-gradient(135deg, #7c3aed, #8b5cf6); }
-.btn.reset { background: var(--card2); color: var(--text2); font-size: 14px; padding: 12px; }
-.btn.home-btn { background: var(--card2); }
-
-/* 游戏界面 */
-.game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.game-header .hearts { font-size: 24px; display: flex; gap: 4px; }
-.game-header .hearts .heart.lost { opacity: .2; transform: scale(.7); filter: grayscale(1); }
-.game-header .score-area { text-align: right; }
-.game-header .score-area .score { font-size: 28px; font-weight: 700; color: var(--gold); }
-.game-header .score-area .combo { font-size: 13px; color: var(--green); min-height: 18px; }
-.game-header .score-area .combo.big { font-size: 18px; animation: pulse .5s ease; }
-@keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.4); } }
-.progress-wrap { height: 4px; background: var(--card2); border-radius: 2px; margin-bottom: 16px; overflow: hidden; }
-.progress-wrap .bar { height: 100%; background: var(--blue); border-radius: 2px; transition: width .3s; }
-.q-card { background: var(--card); border-radius: 16px; padding: 24px; margin-bottom: 12px; border: 2px solid transparent; transition: border-color .3s; }
-.q-card.correct { border-color: var(--green); animation: flash-green .5s; }
-.q-card.wrong { border-color: var(--red); animation: flash-red .5s; }
-@keyframes flash-green { 0% { background: rgba(16,185,129,.2); } 100% { background:var(--card); } }
-@keyframes flash-red { 0% { background: rgba(239,68,68,.2); } 100% { background:var(--card); } }
-.q-card .q-num { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
-.q-card .q-text { font-size: 20px; line-height: 1.8; }
-.q-card .q-text .blank { display: inline-block; min-width: 80px; border-bottom: 2px dashed var(--gold); margin: 0 6px; text-align: center; color: var(--gold); }
-.timer-bar { height: 6px; background: var(--card2); border-radius: 3px; margin-bottom: 16px; overflow: hidden; }
-.timer-bar .fill { height: 100%; background: var(--green); border-radius: 3px; transition: width .1s linear, background .3s; }
-.timer-bar .fill.warning { background: var(--gold); }
-.timer-bar .fill.danger { background: var(--red); }
-.options { display: grid; gap: 10px; }
-.option { background: var(--card); border: 2px solid var(--card2); border-radius: 14px; padding: 16px 20px; font-size: 17px; cursor: pointer; transition: all .15s; font-family: inherit; color: var(--text); text-align: left; }
-.option:hover { border-color: var(--blue); background: rgba(59,130,246,.08); }
-.option:active { transform: scale(.97); }
-.option.chosen-correct { border-color: var(--green); background: rgba(16,185,129,.15); }
-.option.chosen-wrong { border-color: var(--red); background: rgba(239,68,68,.15); }
-.option.show-correct { border-color: var(--green); }
-.option.disabled { pointer-events: none; opacity: .7; }
-.explain { background: var(--card); border-radius: 16px; padding: 18px; margin-top: 12px; display: none; }
-.explain.show { display: block; animation: fadeIn .3s; }
-.explain .tip-label { font-size: 13px; color: var(--blue); font-weight: 600; margin-bottom: 6px; }
-.explain .tip-text { font-size: 15px; line-height: 1.7; color: var(--text2); }
-.explain .next-hint { text-align: center; color: var(--text2); font-size: 13px; margin-top: 12px; animation: blink 1s infinite; }
-@keyframes blink { 0%,100% { opacity:.5; } 50% { opacity:1; } }
-
-/* 结算 */
-.result { text-align: center; padding-top: 20px; }
-.result .emoji { font-size: 70px; margin-bottom: 10px; }
-.result h2 { font-size: 28px; margin-bottom: 6px; }
-.result .sub { color: var(--text2); margin-bottom: 24px; }
-.result .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-.result .res-item { background: var(--card); border-radius: 16px; padding: 16px; }
-.result .res-item .val { font-size: 26px; font-weight: 700; }
-.result .res-item .lbl { font-size: 12px; color: var(--text2); }
-
-/* 错题本 */
-.review-list { max-height: 70vh; overflow-y: auto; }
-.review-item { background: var(--card); border-radius: 16px; padding: 18px; margin-bottom: 10px; border-left: 4px solid var(--red); }
-.review-item .q { font-size: 16px; margin-bottom: 6px; line-height: 1.6; }
-.review-item .a { font-size: 14px; color: var(--green); }
-.review-item .tip { font-size: 13px; color: var(--text2); margin-top: 4px; }
-.review-empty { text-align: center; padding: 60px 20px; color: var(--text2); }
-.review-empty .icon { font-size: 60px; margin-bottom: 12px; }
-
-@media (max-width: 480px) {
-  .home h1 { font-size: 28px; }
-  .home .stats-bar { gap: 10px; }
-  .home .stat { padding: 12px 14px; min-width: 60px; }
-  .home .stat .num { font-size: 22px; }
-  .q-card .q-text { font-size: 17px; }
-  .option { padding: 14px 16px; font-size: 15px; }
-}
+:root{--bg:#0f172a;--card:#1e293b;--card2:#334155;--gold:#f59e0b;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--text:#e2e8f0;--text2:#94a3b8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;justify-content:center;align-items:center;user-select:none;-webkit-tap-highlight-color:transparent;}
+.app{width:100%;max-width:600px;padding:20px;}
+.screen{display:none;}
+.screen.active{display:block;animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.home{text-align:center;padding-top:40px;}
+.home .logo{font-size:60px;margin-bottom:10px;}
+.home h1{font-size:36px;background:linear-gradient(135deg,#f59e0b,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.home .subtitle{color:var(--text2);font-size:15px;margin-bottom:36px;}
+.home .stats-bar{display:flex;gap:20px;justify-content:center;margin-bottom:36px;flex-wrap:wrap;}
+.home .stat{background:var(--card);border-radius:16px;padding:16px 20px;min-width:80px;}
+.home .stat .num{font-size:28px;font-weight:700;color:var(--gold);}
+.home .stat .label{font-size:12px;color:var(--text2);margin-top:2px;}
+.btn{display:block;width:100%;padding:16px;border:none;border-radius:14px;font-size:18px;font-weight:600;cursor:pointer;margin-bottom:12px;transition:all .2s;font-family:inherit;color:#fff;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,.3);}
+.btn:active{transform:scale(.97);}
+.btn.challenge{background:linear-gradient(135deg,#dc2626,#ef4444);}
+.btn.practice{background:linear-gradient(135deg,#2563eb,#3b82f6);}
+.btn.review{background:linear-gradient(135deg,#7c3aed,#8b5cf6);}
+.btn.reset{background:var(--card2);color:var(--text2);font-size:14px;padding:12px;}
+.btn.home-btn{background:var(--card2);}
+.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.game-header .hearts{font-size:24px;display:flex;gap:4px;}
+.game-header .hearts .heart.lost{opacity:.2;transform:scale(.7);filter:grayscale(1);}
+.game-header .score-area{text-align:right;}
+.game-header .score-area .score{font-size:28px;font-weight:700;color:var(--gold);}
+.game-header .score-area .combo{font-size:13px;color:var(--green);min-height:18px;}
+.game-header .score-area .combo.big{font-size:18px;animation:pulse .5s ease;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+.progress-wrap{height:4px;background:var(--card2);border-radius:2px;margin-bottom:16px;overflow:hidden;}
+.progress-wrap .bar{height:100%;background:var(--blue);border-radius:2px;transition:width .3s;}
+.q-card{background:var(--card);border-radius:16px;padding:24px;margin-bottom:12px;border:2px solid transparent;transition:border-color .3s;}
+.q-card.correct{border-color:var(--green);animation:flash-green .5s;}
+.q-card.wrong{border-color:var(--red);animation:flash-red .5s;}
+@keyframes flash-green{0%{background:rgba(16,185,129,.2)}100%{background:var(--card)}}
+@keyframes flash-red{0%{background:rgba(239,68,68,.2)}100%{background:var(--card)}}
+.q-card .q-num{font-size:12px;color:var(--text2);margin-bottom:8px;}
+.q-card .q-text{font-size:20px;line-height:1.8;}
+.q-card .q-text .blank{display:inline-block;min-width:80px;border-bottom:2px dashed var(--gold);margin:0 6px;text-align:center;color:var(--gold);}
+.timer-bar{height:6px;background:var(--card2);border-radius:3px;margin-bottom:16px;overflow:hidden;}
+.timer-bar .fill{height:100%;background:var(--green);border-radius:3px;transition:width .1s linear,background .3s;}
+.timer-bar .fill.warning{background:var(--gold);}
+.timer-bar .fill.danger{background:var(--red);}
+.options{display:grid;gap:10px;}
+.option{background:var(--card);border:2px solid var(--card2);border-radius:14px;padding:16px 20px;font-size:17px;cursor:pointer;transition:all .15s;font-family:inherit;color:var(--text);text-align:left;}
+.option:hover{border-color:var(--blue);background:rgba(59,130,246,.08);}
+.option:active{transform:scale(.97);}
+.option.chosen-correct{border-color:var(--green);background:rgba(16,185,129,.15);}
+.option.chosen-wrong{border-color:var(--red);background:rgba(239,68,68,.15);}
+.option.show-correct{border-color:var(--green);}
+.option.disabled{pointer-events:none;opacity:.7;}
+.explain{background:var(--card);border-radius:16px;padding:18px;margin-top:12px;display:none;}
+.explain.show{display:block;animation:fadeIn .3s;}
+.explain .tip-label{font-size:13px;color:var(--blue);font-weight:600;margin-bottom:6px;}
+.explain .tip-text{font-size:15px;line-height:1.7;color:var(--text2);}
+.explain .next-hint{text-align:center;color:var(--text2);font-size:13px;margin-top:12px;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:.5}50%{opacity:1}}
+.result{text-align:center;padding-top:20px;}
+.result .emoji{font-size:70px;margin-bottom:10px;}
+.result h2{font-size:28px;margin-bottom:6px;}
+.result .sub{color:var(--text2);margin-bottom:24px;}
+.result .res-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+.result .res-item{background:var(--card);border-radius:16px;padding:16px;}
+.result .res-item .val{font-size:26px;font-weight:700;}
+.result .res-item .lbl{font-size:12px;color:var(--text2);}
+.review-list{max-height:70vh;overflow-y:auto;}
+.review-item{background:var(--card);border-radius:16px;padding:18px;margin-bottom:10px;border-left:4px solid var(--red);}
+.review-item .q{font-size:16px;margin-bottom:6px;line-height:1.6;}
+.review-item .a{font-size:14px;color:var(--green);}
+.review-item .tip{font-size:13px;color:var(--text2);margin-top:4px;}
+.review-empty{text-align:center;padding:60px 20px;color:var(--text2);}
+.review-empty .icon{font-size:60px;margin-bottom:12px;}
+@media(max-width:480px){.home h1{font-size:28px}.home .stats-bar{gap:10px}.home .stat{padding:12px 14px;min-width:60px}.home .stat .num{font-size:22px}.q-card .q-text{font-size:17px}.option{padding:14px 16px;font-size:15px}}
 </style>
 </head>
 <body>
-
 <div class="app">
-  <div class="screen active home" id="homeScreen">
-    <div class="logo">📚</div>
-    <h1>实词大闯关</h1>
-    <p class="subtitle">公务员考试 · 实词辨析专项训练</p>
-    <div class="stats-bar">
-      <div class="stat"><div class="num" id="statTotal">0</div><div class="label">累计答题</div></div>
-      <div class="stat"><div class="num" id="statBest">0</div><div class="label">最高连击</div></div>
-      <div class="stat"><div class="num" id="statWrong">0</div><div class="label">错题本</div></div>
-    </div>
-    <button class="btn challenge" onclick="startChallenge()">🔥 闯关模式</button>
-    <button class="btn practice" onclick="startPractice()">📝 练习模式</button>
-    <button class="btn review" onclick="showReview()">📋 错题本</button>
-    <button class="btn reset" onclick="resetData()">🔄 重置记录</button>
-  </div>
-
-  <div class="screen" id="gameScreen">
-    <div class="game-header">
-      <div class="hearts" id="hearts"></div>
-      <div class="score-area">
-        <div class="score" id="scoreDisplay">0</div>
-        <div class="combo" id="comboDisplay"></div>
-      </div>
-    </div>
-    <div class="progress-wrap"><div class="bar" id="progressBar" style="width:0%"></div></div>
-    <div class="timer-bar"><div class="fill" id="timerFill" style="width:100%"></div></div>
-    <div class="q-card" id="qCard">
-      <div class="q-num" id="qNum"></div>
-      <div class="q-text" id="qText"></div>
-    </div>
-    <div class="options" id="options"></div>
-    <div class="explain" id="explain"></div>
-  </div>
-
-  <div class="screen result" id="resultScreen">
-    <div class="emoji" id="resultEmoji"></div>
-    <h2 id="resultTitle"></h2>
-    <p class="sub" id="resultSub"></p>
-    <div class="res-grid">
-      <div class="res-item"><div class="val" style="color:var(--gold)" id="resScore">0</div><div class="lbl">总分</div></div>
-      <div class="res-item"><div class="val" style="color:var(--green)" id="resCorrect">0</div><div class="lbl">答对</div></div>
-      <div class="res-item"><div class="val" style="color:var(--red)" id="resWrong">0</div><div class="lbl">答错</div></div>
-      <div class="res-item"><div class="val" style="color:var(--blue)" id="resStreak">0</div><div class="lbl">最高连击</div></div>
-    </div>
-    <button class="btn challenge" onclick="startChallenge()">🔥 再来一局</button>
-    <button class="btn home-btn" onclick="goHome()">🏠 返回首页</button>
-  </div>
-
-  <div class="screen" id="reviewScreen">
-    <div style="text-align:center;margin-bottom:20px">
-      <h2 style="font-size:24px;color:var(--purple)">📋 错题本</h2>
-      <p style="color:var(--text2);font-size:14px">答错的题目会自动收录</p>
-    </div>
-    <div class="review-list" id="reviewList"></div>
-    <button class="btn home-btn" style="display:block;width:100%;margin-top:12px" onclick="goHome()">🏠 返回首页</button>
-  </div>
+<div class="screen active home" id="homeScreen">
+<div class="logo">📚</div><h1>实词大闯关</h1><p class="subtitle">公务员考试 · 实词辨析1500词</p>
+<div class="stats-bar">
+<div class="stat"><div class="num" id="statTotal">0</div><div class="label">累计答题</div></div>
+<div class="stat"><div class="num" id="statBest">0</div><div class="label">最高连击</div></div>
+<div class="stat"><div class="num" id="statWrong">0</div><div class="label">错题本</div></div>
 </div>
-
+<button class="btn challenge" onclick="startChallenge()">🔥 闯关模式</button>
+<button class="btn practice" onclick="startPractice()">📝 练习模式</button>
+<button class="btn review" onclick="showReview()">📋 错题本</button>
+<button class="btn reset" onclick="resetData()">🔄 重置记录</button>
+</div>
+<div class="screen" id="gameScreen">
+<div class="game-header"><div class="hearts" id="hearts"></div><div class="score-area"><div class="score" id="scoreDisplay">0</div><div class="combo" id="comboDisplay"></div></div></div>
+<div class="progress-wrap"><div class="bar" id="progressBar" style="width:0%"></div></div>
+<div class="timer-bar"><div class="fill" id="timerFill" style="width:100%"></div></div>
+<div class="q-card" id="qCard"><div class="q-num" id="qNum"></div><div class="q-text" id="qText"></div></div>
+<div class="options" id="options"></div><div class="explain" id="explain"></div>
+</div>
+<div class="screen result" id="resultScreen">
+<div class="emoji" id="resultEmoji"></div><h2 id="resultTitle"></h2><p class="sub" id="resultSub"></p>
+<div class="res-grid">
+<div class="res-item"><div class="val" style="color:var(--gold)" id="resScore">0</div><div class="lbl">总分</div></div>
+<div class="res-item"><div class="val" style="color:var(--green)" id="resCorrect">0</div><div class="lbl">答对</div></div>
+<div class="res-item"><div class="val" style="color:var(--red)" id="resWrong">0</div><div class="lbl">答错</div></div>
+<div class="res-item"><div class="val" style="color:var(--blue)" id="resStreak">0</div><div class="lbl">最高连击</div></div>
+</div>
+<button class="btn challenge" onclick="startChallenge()">🔥 再来一局</button>
+<button class="btn home-btn" onclick="goHome()">🏠 返回首页</button>
+</div>
+<div class="screen" id="reviewScreen">
+<div style="text-align:center;margin-bottom:20px"><h2 style="font-size:24px;color:var(--purple)">📋 错题本</h2><p style="color:var(--text2);font-size:14px">答错的题目会自动收录</p></div>
+<div class="review-list" id="reviewList"></div>
+<button class="btn home-btn" style="display:block;width:100%;margin-top:12px" onclick="goHome()">🏠 返回首页</button>
+</div>
+</div>
 <script>
-// ===================== 题库 =====================
-const WORD_BANK = [
-  // ── 必须 / 必需 ──
-  {q:"想要考上公务员，__付出持续的努力。",opts:["必须","必需"],ans:0,tip:"「必须」是副词，强调事理上的必要；「必需」是动词/形容词，指一定要有的、不可少的。"},
-  {q:"水和食物是维持生命的__品。",opts:["必须","必需"],ans:1,tip:"「必需」作定语修饰名词，表示不可缺少的；「必须」一般不作定语。"},
-  {q:"这项工作__在三天内完成。",opts:["必须","必需"],ans:0,tip:"「必须」后面跟动词，强调一定要做。"},
-  {q:"身份证是办理手续时__出示的证件。",opts:["必须","必需"],ans:0,tip:"此处修饰动词「出示」，用副词「必须」。"},
-
-  // ── 反映 / 反应 ──
-  {q:"这部电影__了当代年轻人的生活状态。",opts:["反映","反应"],ans:0,tip:"「反映」是把客观事物的实质表现出来；「反应」是受到刺激后作出的回应。"},
-  {q:"吃了药之后，身体出现了不良__。",opts:["反映","反应"],ans:1,tip:"「反应」指机体对外界刺激的回应。"},
-  {q:"群众的意见要及时向上级__。",opts:["反映","反应"],ans:0,tip:"向上级汇报情况用「反映」。"},
-  {q:"他的演讲引起了强烈的__。",opts:["反映","反应"],ans:1,tip:"引起的回应、反响用「反应」。"},
-
-  // ── 启示 / 启事 ──
-  {q:"这个寓言故事给了我们深刻的__。",opts:["启示","启事"],ans:0,tip:"「启示」是启发、让人领悟道理；「启事」是公开声明，如寻人启事。"},
-  {q:"他在报纸上登了一则寻人__。",opts:["启示","启事"],ans:1,tip:"「启事」是公开的文字告示。"},
-  {q:"历史留给我们的__是：落后就要挨打。",opts:["启示","启事"],ans:0,tip:"「启示」指启发领悟的道理。"},
-
-  // ── 制定 / 制订 ──
-  {q:"国家__了一系列保护环境的法律法规。",opts:["制定","制订"],ans:0,tip:"「制定」指定出（法律、规程、计划等），强调确定下来；「制订」侧重创制拟定的过程。"},
-  {q:"我们正在__下半年的工作计划。",opts:["制定","制订"],ans:1,tip:"还在拟定过程中，尚未最终确定，用「制订」。"},
-  {q:"新的课程标准已经__完毕并正式实施。",opts:["制定","制订"],ans:0,tip:"已经定案并实施，用「制定」。"},
-  {q:"经过反复讨论，最终__了这套方案。",opts:["制定","制订"],ans:0,tip:"强调最终确定下来，用「制定」。"},
-
-  // ── 盈利 / 营利 ──
-  {q:"这家公司今年实现了可观的__。",opts:["盈利","营利"],ans:0,tip:"「盈利」是名词，指获得的利润；「营利」是动词，指谋求利润。"},
-  {q:"公立医院不以__为目的。",opts:["盈利","营利"],ans:1,tip:"「营利」是动词，指追求利润的行为。"},
-  {q:"企业需要__才能持续发展。",opts:["盈利","营利"],ans:0,tip:"此处需要名词表示「利润」，用「盈利」。"},
-
-  // ── 权利 / 权力 ──
-  {q:"公民有受教育的__。",opts:["权利","权力"],ans:0,tip:"「权利」是公民依法享有的利益和自由；「权力」是政治上的强制力量或职责范围内的支配力。"},
-  {q:"政府机关行使行政管理__。",opts:["权利","权力"],ans:1,tip:"政府机关的支配和管理力量是「权力」。"},
-  {q:"消费者有权维护自己的合法__。",opts:["权利","权力"],ans:0,tip:"消费者享有的利益和保障是「权利」。"},
-  {q:"不能滥用手中的__谋取私利。",opts:["权利","权力"],ans:1,tip:"手中的支配力量、职权是「权力」。"},
-
-  // ── 法治 / 法制 ──
-  {q:"我们要建设社会主义__国家。",opts:["法治","法制"],ans:0,tip:"「法治」是治理国家的一种方略，强调依法治理；「法制」指法律制度本身。"},
-  {q:"健全社会主义__体系。",opts:["法治","法制"],ans:1,tip:"「法制」是法律制度的统称。"},
-  {q:"推进国家治理体系现代化，必须坚持全面__。",opts:["法治","法制"],ans:0,tip:"「法治」是治理方式，与「人治」相对。"},
-
-  // ── 贯穿 / 贯串 ──
-  {q:"这条公路__了三个省份。",opts:["贯穿","贯串"],ans:0,tip:"「贯穿」侧重于穿过、连通，多用于具体事物；「贯串」侧重于串连在一起，多用于抽象事物。"},
-  {q:"爱国主义精神__了整个主题教育活动。",opts:["贯穿","贯串"],ans:0,tip:"「贯穿」用于抽象事物表示从头到尾，更为常用。"},
-  {q:"用一根主线把各个故事情节__起来。",opts:["贯穿","贯串"],ans:1,tip:"把分散的东西串成一个整体，用「贯串」更贴切。"},
-
-  // ── 考察 / 考查 ──
-  {q:"中央领导到地方__工作。",opts:["考察","考查"],ans:0,tip:"「考察」是实地观察调查；「考查」是用一定的标准来检查衡量。"},
-  {q:"期末考试是用来__学生一学期的学习成果。",opts:["考察","考查"],ans:1,tip:"用考试等手段检验衡量，用「考查」。"},
-  {q:"这批干部将被派往基层__锻炼。",opts:["考察","考查"],ans:0,tip:"实地观察了解情况用「考察」。"},
-
-  // ── 学历 / 学力 ──
-  {q:"招聘要求本科及以上__。",opts:["学历","学力"],ans:0,tip:"「学历」指学习的经历，如在哪些学校毕业；「学力」指学习能力、学问水平。"},
-  {q:"同等__者可以申请报考。",opts:["学历","学力"],ans:1,tip:"「同等学力」是固定用法，指同等的学习能力和知识水平。"},
-
-  // ── 出身 / 出生 ──
-  {q:"他__在一个普通的工人家庭。",opts:["出身","出生"],ans:1,tip:"「出生」指胎儿从母体分离出来，后面可接时间/地点；「出身」指由家庭背景决定的社会身份。"},
-  {q:"他是军人__，做事雷厉风行。",opts:["出身","出生"],ans:0,tip:"「出身」指家庭背景或早期经历所决定的身份。"},
-
-  // ── 定金 / 订金 ──
-  {q:"购房时缴纳的__具有担保效力，违约不退还。",opts:["定金","订金"],ans:0,tip:"「定金」是法律概念，有担保效力，违约不退；「订金」是预付款，一般可退。"},
-  {q:"先付一部分__预订，到货再付尾款。",opts:["定金","订金"],ans:1,tip:"预订商品付的预付款，一般无担保性质，用「订金」。"},
-
-  // ── 实行 / 施行 ──
-  {q:"新政策将于明年1月1日起__。",opts:["实行","施行"],ans:1,tip:"「施行」指法令、规章等公布后从某时起生效；「实行」是用行动来实现。"},
-  {q:"这项改革措施已经在三个城市试点__。",opts:["实行","施行"],ans:0,tip:"实际执行、落实用「实行」。"},
-
-  // ── 需要 / 须要 ──
-  {q:"这个项目__更多的时间来完成。",opts:["需要","须要"],ans:0,tip:"「需要」是应该有或必须有，强调需求；「须要」是一定要、必须要。"},
-  {q:"在实验室__严格遵守操作规程。",opts:["需要","须要"],ans:1,tip:"强调一定要、必须如此，用「须要」。"},
-
-  // ── 以致 / 以至 ──
-  {q:"他没复习，__考试不及格。",opts:["以致","以至"],ans:0,tip:"「以致」引出不好的结果，含「导致」之意；「以至」表示延伸或达到某种程度。"},
-  {q:"学习要从简单__复杂，循序渐进。",opts:["以致","以至"],ans:1,tip:"表示范围的延伸（从…到…），用「以至」。"},
-  {q:"他太紧张了，__发挥失常。",opts:["以致","以至"],ans:0,tip:"引出不好的结果，用「以致」。"},
-
-  // ── 分辨 / 分辩 ──
-  {q:"很难__这对双胞胎谁是姐姐。",opts:["分辨","分辩"],ans:0,tip:"「分辨」是区分辨别；「分辩」是为自己辩白、解释。"},
-  {q:"他没有做错，不需要向任何人__。",opts:["分辨","分辩"],ans:1,tip:"为自己辩解、澄清用「分辩」。"},
-
-  // ── 截止 / 截至 ──
-  {q:"报名__日期为本周五。",opts:["截止","截至"],ans:0,tip:"「截止」表示到某一时间停止；「截至」表示到某一时间为止（可能还在继续）。"},
-  {q:"__昨天，已有三千人报名。",opts:["截止","截至"],ans:1,tip:"到昨天为止的统计，事情可能还在继续，用「截至」。"},
-  {q:"优惠活动将于月底__。",opts:["截止","截至"],ans:0,tip:"停止、终止用「截止」。"},
-
-  // ── 检查 / 检察 ──
-  {q:"医生仔细__了病人的伤口。",opts:["检查","检察"],ans:0,tip:"「检查」是一般地查看、检验；「检察」是特指法律监督机关的审查活动。"},
-  {q:"检察机关依法履行法律__职责。",opts:["检查","检察"],ans:1,tip:"「检察」是法律术语，特指检察机关的法律监督。"},
-
-  // ── 篡改 / 窜改 ──
-  {q:"有人恶意__数据，造成严重损失。",opts:["篡改","窜改"],ans:0,tip:"「篡改」是用作伪的手段改动（经典、理论、政策等），含贬义；「窜改」是改动文字、文件等。"},
-  {q:"这篇文章经过多次__，已面目全非。",opts:["篡改","窜改"],ans:1,tip:"改动文字内容用「窜改」，不一定含恶意。"},
-
-  // ── 度过 / 渡过 ──
-  {q:"我们一起__了一个愉快的周末。",opts:["度过","渡过"],ans:0,tip:"「度过」用于时间；「渡过」用于空间上的横越（如渡河），或比喻度过难关。"},
-  {q:"在大家的帮助下，他终于__了难关。",opts:["度过","渡过"],ans:1,tip:"「渡过难关」是固定搭配，用「渡过」。"},
-  {q:"在这里__的每一天都很充实。",opts:["度过","渡过"],ans:0,tip:"涉及时间的经过，用「度过」。"},
-
-  // ── 中止 / 终止 ──
-  {q:"合同到期后自动__。",opts:["中止","终止"],ans:1,tip:"「终止」是最终结束、停止；「中止」是中途暂停，可能恢复。"},
-  {q:"因天气原因，比赛暂时__。",opts:["中止","终止"],ans:0,tip:"中途暂停，后面可能恢复，用「中止」。"},
-  {q:"双方同意__合作关系。",opts:["中止","终止"],ans:1,tip:"彻底结束用「终止」。"},
-
-  // ── 启用 / 起用 ──
-  {q:"新机场将于下月正式__。",opts:["启用","起用"],ans:0,tip:"「启用」是开始使用（物、设施）；「起用」是重新任用已退职或免职的人员，也指提拔新人。"},
-  {q:"公司董事会决定__一批年轻干部。",opts:["启用","起用"],ans:1,tip:"提拔任用人员用「起用」。"},
-
-  // ── 树立 / 竖立 ──
-  {q:"我们要__正确的人生观和价值观。",opts:["树立","竖立"],ans:0,tip:"「树立」用于抽象的好的事物（榜样、信心、观念等）；「竖立」是具体物体直立起来。"},
-  {q:"广场上__着一根旗杆。",opts:["树立","竖立"],ans:1,tip:"具体物体直立用「竖立」。"},
-
-  // ── 包括 / 囊括 ──
-  {q:"本次展览__了从古代到现代的各类艺术品。",opts:["包括","囊括"],ans:0,tip:"「包括」是包含在内；「囊括」是把全部包罗在内，含全部拿下的意思。"},
-  {q:"中国队__了乒乓球项目的全部金牌。",opts:["包括","囊括"],ans:1,tip:"全部包揽用「囊括」。"},
-
-  // ── 保障 / 保证 ──
-  {q:"社会保障制度是人民生活的__。",opts:["保障","保证"],ans:0,tip:"「保障」是保护使不受侵害；「保证」是担保做到。"},
-  {q:"我__明天一定完成这个任务。",opts:["保障","保证"],ans:1,tip:"担保、承诺做到用「保证」。"},
-  {q:"发展经济是__民生的基础。",opts:["保障","保证"],ans:0,tip:"保护、维护用「保障」。"},
-
-  // ── 采用 / 采纳 ──
-  {q:"工厂__了最新的生产工艺。",opts:["采用","采纳"],ans:0,tip:"「采用」指认为合适而选用（技术、方法、工具等）；「采纳」指接受（意见、建议、方案）。"},
-  {q:"领导__了大家的合理化建议。",opts:["采用","采纳"],ans:1,tip:"接受建议、意见用「采纳」。"},
-
-  // ── 呈现 / 展现 ──
-  {q:"这部作品__了当代社会的多元面貌。",opts:["呈现","展现"],ans:0,tip:"「呈现」是显现出、展示在眼前；「展现」是展示出来让人看到，主动性更强。"},
-  {q:"打开画卷，一幅美丽的山水图__在眼前。",opts:["呈现","展现"],ans:1,tip:"展示出来，用「展现」。"},
-  {q:"各项数据__出良好的发展态势。",opts:["呈现","展现"],ans:0,tip:"客观显现出某种状态，用「呈现」。"},
-
-  // ── 充分 / 充足 ──
-  {q:"我们有__的理由相信这件事能成功。",opts:["充分","充足"],ans:0,tip:"「充分」多用于抽象事物如理由、准备、信心；「充足」多用于具体事物如阳光、粮食、资金。"},
-  {q:"保证市场供应__，物价稳定。",opts:["充分","充足"],ans:1,tip:"物品数量足够用「充足」。"},
-  {q:"准备工作做得非常__。",opts:["充分","充足"],ans:0,tip:"「充分」修饰准备、发挥等抽象概念。"},
-
-  // ── 发展 / 发达 ──
-  {q:"近年来，中国的高铁技术__迅速。",opts:["发展","发达"],ans:0,tip:"「发展」是动词，指事物由小到大、由低到高的变化过程；「发达」是形容词，指已经充分发展的状态。"},
-  {q:"上海是一个经济非常__的城市。",opts:["发展","发达"],ans:1,tip:"形容词，描述已经很先进的状态，用「发达」。"},
-
-  // ── 改进 / 改善 ──
-  {q:"我们要不断__工作方法。",opts:["改进","改善"],ans:0,tip:"「改进」侧重于改变旧的不好的，使之进步；「改善」侧重于使原有状况变得更好。"},
-  {q:"政府出台政策努力__民生。",opts:["改进","改善"],ans:1,tip:"「改善民生」是固定搭配。"},
-  {q:"厂家根据用户反馈__了产品设计。",opts:["改进","改善"],ans:0,tip:"改变原有设计使之更好，用「改进」。"},
-
-  // ── 规划 / 计划 ──
-  {q:"国家制定了十四五__纲要。",opts:["规划","计划"],ans:0,tip:"「规划」是比较全面的长远的发展蓝图；「计划」是较短期的、具体的工作安排。"},
-  {q:"我__下个月去北京出差。",opts:["规划","计划"],ans:1,tip:"个人短期的具体安排用「计划」。"},
-  {q:"城市建设需要科学__。",opts:["规划","计划"],ans:0,tip:"长远的、全局性的安排用「规划」。"},
-
-  // ── 鼓励 / 鼓舞 ──
-  {q:"老师经常__学生多读课外书。",opts:["鼓励","鼓舞"],ans:0,tip:"「鼓励」是激发、勉励（一般是人对人）；「鼓舞」是使人振作、增强信心（可以是事物）。"},
-  {q:"这个消息令人__。",opts:["鼓励","鼓舞"],ans:1,tip:"「令人鼓舞」是固定搭配。"},
-
-  // ── 成果 / 后果 / 结果 ──
-  {q:"这项研究取得了丰硕的__。",opts:["成果","后果","结果"],ans:0,tip:"「成果」是褒义词，指工作或事业的收获；「后果」多含贬义；「结果」中性。"},
-  {q:"谁都不能预料这件事的__。",opts:["成果","后果","结果"],ans:2,tip:"中性表达，用「结果」。"},
-  {q:"破坏环境的__由全人类共同承担。",opts:["成果","后果","结果"],ans:1,tip:"含贬义的不好的结局，用「后果」。"},
-
-  // ── 推广 / 推行 ──
-  {q:"这项新技术值得向全国__。",opts:["推广","推行"],ans:0,tip:"「推广」侧重于扩大使用范围或影响范围；「推行」侧重于推动执行（政策、制度等）。"},
-  {q:"国家__九年义务教育制度。",opts:["推广","推行"],ans:1,tip:"推动政策、制度的实行用「推行」。"},
-
-  // ── 短缺 / 缺乏 ──
-  {q:"这个地区水资源__。",opts:["短缺","缺乏"],ans:0,tip:"「短缺」多用于具体物资，指数量不足；「缺乏」可用于抽象或具体，指没有或不够。"},
-  {q:"他__工作经验，需要多锻炼。",opts:["短缺","缺乏"],ans:1,tip:"抽象事物的不足用「缺乏」。"},
-
-  // ── 震动 / 振动 ──
-  {q:"这个消息__了全国。",opts:["震动","振动"],ans:0,tip:"「震动」是使颤动，引申为使人心不平静；「振动」是物理学上的机械振动。"},
-  {q:"手机调成__模式。",opts:["震动","振动"],ans:1,tip:"物理学上的往复运动用「振动」。"},
-
-  // ── 接收 / 接受 ──
-  {q:"他__了这份礼物。",opts:["接收","接受"],ans:1,tip:"「接受」是对事物容纳不拒绝；「接收」是收受、接纳（信号、新成员等）。"},
-  {q:"这台设备可以__卫星信号。",opts:["接收","接受"],ans:0,tip:"收取信号用「接收」。"},
-  {q:"我们要虚心__别人的意见。",opts:["接收","接受"],ans:1,tip:"对意见等不拒绝，用「接受」。"},
-
-  // ── 确定 / 确认 ──
-  {q:"请__一下你是否参加明天的会议。",opts:["确定","确认"],ans:1,tip:"「确认」是进一步核实明确；「确定」是明确而肯定。"},
-  {q:"最终方案已经__下来了。",opts:["确定","确认"],ans:0,tip:"定下来、明确下来用「确定」。"},
-
-  // ── 发布 / 发表 ──
-  {q:"政府__了最新的经济数据。",opts:["发布","发表"],ans:0,tip:"「发布」是公布（新闻、命令、指标等）；「发表」是公开表达（意见、文章等）。"},
-  {q:"他在杂志上__了一篇学术论文。",opts:["发布","发表"],ans:1,tip:"公开表达观点或刊登文章用「发表」。"},
-
-  // ── 引导 / 导致 ──
-  {q:"老师要正确__学生的学习方向。",opts:["引导","导致"],ans:0,tip:"「引导」是带领、指引（中性或褒义）；「导致」是引起（多含贬义）。"},
-  {q:"管理不善__了项目失败。",opts:["引导","导致"],ans:1,tip:"引起不好的结果用「导致」。"},
-
-  // ── 机制 / 体制 ──
-  {q:"要完善市场监督__。",opts:["机制","体制"],ans:0,tip:"「机制」是系统内部组织和运行的规律/方式；「体制」是组织制度、体系结构。"},
-  {q:"深化行政管理__改革。",opts:["机制","体制"],ans:1,tip:"组织制度和体系结构用「体制」。"},
-
-  // ── 内涵 / 含义 ──
-  {q:"要深刻理解这句话的__。",opts:["内涵","含义"],ans:1,tip:"「含义」是词句等包含的意义；「内涵」是事物内在的、本质的内容。"},
-  {q:"中华文化有丰富的__。",opts:["内涵","含义"],ans:0,tip:"内在的、本质性的内容，用「内涵」更贴切。"},
-
-  // ── 甚至 / 尤其 ──
-  {q:"他学习很努力，__周末也不休息。",opts:["甚至","尤其"],ans:0,tip:"「甚至」表示递进，强调更极端的情况；「尤其」表示在同类中更加突出。"},
-  {q:"他喜欢运动，__是篮球。",opts:["甚至","尤其"],ans:1,tip:"在同类事物中更突出地用「尤其」。"},
-
-  // ── 从而 / 进而 ──
-  {q:"先学好基础，__深入学习专业知识。",opts:["从而","进而"],ans:1,tip:"「进而」表示在前一行动的基础上继续前进；「从而」表示因果关系，前面是方法，后面是结果。"},
-  {q:"优化了算法，__提高了运算速度。",opts:["从而","进而"],ans:0,tip:"前面是方法手段，后面是它带来的结果，用「从而」。"},
-
-  // ── 因为 / 由于 ──
-  {q:"__天气原因，航班延误了。",opts:["因为","由于"],ans:1,tip:"「由于」多用于书面语、正式场合；「因为」口语化。"},
-  {q:"我__喜欢才去做这件事。",opts:["因为","由于"],ans:0,tip:"口语化表达原因用「因为」。"},
-
-  // ── 何况 / 况且 ──
-  {q:"他连基础都没学，__这么难的内容？",opts:["何况","况且"],ans:0,tip:"「何况」用反问语气表示更进一层；「况且」是陈述语气，补充理由。"},
-  {q:"天太晚了，__又下雨了，就别出门了。",opts:["何况","况且"],ans:1,tip:"补充追加理由用「况且」。"},
-
-  // ── 忽视 / 忽略 ──
-  {q:"安全问题不容__。",opts:["忽视","忽略"],ans:0,tip:"「忽视」是有意或无意地不重视；「忽略」多指因为疏忽而没有注意到。"},
-  {q:"一个标点符号都不能__。",opts:["忽视","忽略"],ans:1,tip:"因疏忽而遗漏用「忽略」。"},
-
-  // ── 推脱 / 推托 ──
-  {q:"不要总是__责任。",opts:["推脱","推托"],ans:0,tip:"「推脱」是推卸、摆脱（责任、义务等）；「推托」是借故拒绝（邀请、要求等）。"},
-  {q:"他__说身体不舒服，没来参加聚会。",opts:["推脱","推托"],ans:1,tip:"借故推辞、婉拒用「推托」。"},
-
-  // ── 简洁 / 简捷 ──
-  {q:"他的文章__明了，通俗易懂。",opts:["简洁","简捷"],ans:0,tip:"「简洁」是说话行文简明扼要，没有多余内容；「简捷」是简便快捷。"},
-  {q:"用最__的方法解决这个问题。",opts:["简洁","简捷"],ans:1,tip:"简便快捷用「简捷」。"},
-
-  // ── 开拓 / 开辟 ──
-  {q:"我们要不断__创新，敢为人先。",opts:["开拓","开辟"],ans:0,tip:"「开拓」侧重在原有基础上扩展；「开辟」侧重从无到有地开创。"},
-  {q:"丝绸之路__了东西方贸易的新通道。",opts:["开拓","开辟"],ans:1,tip:"从无到有地开创，用「开辟」。"},
-
-  // ── 夸张 / 夸大 ──
-  {q:"他这个说法太__了，别当真。",opts:["夸张","夸大"],ans:0,tip:"「夸张」是言过其实，常作为一种修辞；「夸大」是把事情说得超过了原有程度，多含贬义。"},
-  {q:"故意__成绩、隐瞒问题是不可取的。",opts:["夸张","夸大"],ans:1,tip:"有目的地把事情说大，含贬义，用「夸大」。"},
-
-  // ── 流传 / 留传 ──
-  {q:"这个民间故事已经__了好几百年。",opts:["流传","留传"],ans:0,tip:"「流传」是传下来或传播开（故事、消息等）；「留传」是遗留下来传给后代（物品、财产等）。"},
-  {q:"祖先__下来的珍宝。",opts:["流传","留传"],ans:1,tip:"遗留下来的具体物品用「留传」。"},
-
-  // ── 诞生 / 诞辰 ──
-  {q:"2024年是孔子__2575周年。",opts:["诞生","诞辰"],ans:1,tip:"「诞辰」是生日（用于所尊敬的人）；「诞生」是出生（动词）。"},
-  {q:"中国共产党于1921年__。",opts:["诞生","诞辰"],ans:0,tip:"出生、成立用动词「诞生」。"},
-
-  // ── 国是 / 国事 ──
-  {q:"两会期间，代表们共商__。",opts:["国是","国事"],ans:0,tip:"「国是」指国家大计、大政方针；「国事」指国家的事务。「共商国是」是固定搭配。"},
-  {q:"国家主席进行__访问。",opts:["国是","国事"],ans:1,tip:"国家事务、外交活动用「国事」。"},
-
-  // ── 预定 / 预订 ──
-  {q:"我们__了下周的酒店。",opts:["预定","预订"],ans:1,tip:"「预订」是预先订购、订租；「预定」是预先规定或约定。"},
-  {q:"比赛在__的时间准时开始。",opts:["预定","预订"],ans:0,tip:"预先规定的时间用「预定」。"},
-
-  // ── 做客 / 作客 ──
-  {q:"周末去朋友家__。",opts:["做客","作客"],ans:0,tip:"「做客」是到别人家拜访；「作客」是在外地寄居。"},
-  {q:"独在异乡为异__。",opts:["做客","作客"],ans:1,tip:"寄居他乡用「作客」。"},
-
-  // ── 谋取 / 牟取 ──
-  {q:"为广大人民__幸福。",opts:["谋取","牟取"],ans:0,tip:"「谋取」是设法取得，中性词；「牟取」是非法或不正当地获取，贬义词。"},
-  {q:"不法商家__暴利。",opts:["谋取","牟取"],ans:1,tip:"用不正当手段获取利益，用「牟取」。"},
-
-  // ── 质疑 / 置疑 ──
-  {q:"对不合理的现象提出__。",opts:["质疑","置疑"],ans:0,tip:"「质疑」是提出疑问；「置疑」是怀疑（多用于否定式）。"},
-  {q:"这个事实不容__。",opts:["质疑","置疑"],ans:1,tip:"「不容置疑」是固定搭配。"},
-
-  // ── 装饰 / 妆饰 ──
-  {q:"新房里__得很温馨。",opts:["装饰","妆饰"],ans:0,tip:"「装饰」是对身体或物体的表面进行美化；「妆饰」是特指对人的打扮。"},
-  {q:"她精心__了一番才出门。",opts:["装饰","妆饰"],ans:1,tip:"对人进行打扮用「妆饰」。"},
-
-  // ── 溶化 / 融化 / 熔化 ──
-  {q:"春天来了，冰雪开始__。",opts:["溶化","融化","熔化"],ans:1,tip:"冰雪变成水用「融化」；「溶化」是固体在液体中溶解；「熔化」是固体加热变成液体。"},
-  {q:"铁在高温下__成铁水。",opts:["溶化","融化","熔化"],ans:2,tip:"固体加热变为液体用「熔化」。"},
-  {q:"把糖放进水里，很快就__了。",opts:["溶化","融化","熔化"],ans:0,tip:"在液体中溶解用「溶化」。"},
-
-  // ── 徘徊 / 徜徉 ──
-  {q:"他在门口__了很久，不知该不该进去。",opts:["徘徊","徜徉"],ans:0,tip:"「徘徊」是在一个地方来回走，比喻犹豫不决；「徜徉」是悠闲自在地行走。"},
-  {q:"在花海中__，十分惬意。",opts:["徘徊","徜徉"],ans:1,tip:"悠闲自在地行走用「徜徉」。"},
-
-  // ── 不只 / 不止 ──
-  {q:"他__是老师，还是作家。",opts:["不只","不止"],ans:0,tip:"「不只」是连词，相当于「不但」「不仅」；「不止」是动词，表示不停止或超出某个数量。"},
-  {q:"教室里__五十个人。",opts:["不只","不止"],ans:1,tip:"超出某个数量用「不止」。"},
-
-  // ── 本义 / 本意 ──
-  {q:"这个词的__是指一种工具。",opts:["本义","本意"],ans:0,tip:"「本义」是词语本来的意思；「本意」是说话或做事的本来意图。"},
-  {q:"我的__是好的，没想到被误解了。",opts:["本义","本意"],ans:1,tip:"本来意图、心意用「本意」。"},
-
-  // ── 暴发 / 爆发 ──
-  {q:"山洪__，冲毁了道路。",opts:["暴发","爆发"],ans:0,tip:"「暴发」多用于洪水、传染病等突然而猛烈地发生；「爆发」多用于火山、革命、战争、情绪等。"},
-  {q:"战争__后，许多人流离失所。",opts:["暴发","爆发"],ans:1,tip:"战争、革命、火山等用「爆发」。"},
-
-  // ── 违反 / 违犯 ──
-  {q:"闯红灯是__交通规则的行为。",opts:["违反","违犯"],ans:0,tip:"「违反」是不遵守（规则、纪律、合同等）；「违犯」是触犯（法律），程度更重。"},
-  {q:"__刑法将受到法律严惩。",opts:["违反","违犯"],ans:1,tip:"触犯法律用「违犯」，程度比「违反」重。"},
-
-  // ── 难免 / 不免 ──
-  {q:"刚开始学，犯点错是__的。",opts:["难免","不免"],ans:0,tip:"「难免」是不容易避免；「不免」是免不了、不能不说是。"},
-  {q:"看到这一幕，他__有些伤感。",opts:["难免","不免"],ans:1,tip:"免不了、不得不说用「不免」，后面接心理感受。"},
-
-  // ── 未免 / 难免 ──
-  {q:"你这样说__太苛刻了。",opts:["未免","难免"],ans:0,tip:"「未免」表示不以为然，语气较委婉；「难免」是不易避免。"},
-  {q:"人生__会遇到挫折。",opts:["未免","难免"],ans:1,tip:"不容易避免用「难免」。"},
-
-  // ── 绝不 / 决不 ──
-  {q:"我__允许这样的事情再次发生。",opts:["绝不","决不"],ans:0,tip:"「绝不」是「绝对不」；「决不」是「坚决不」。「绝不」更强调彻底否定。"},
-  {q:"我__辜负大家的期望。",opts:["绝不","决不"],ans:1,tip:"表达决心用「决不」。"},
-
-  // ── 伺候 / 侍候 ──
-  {q:"他精心__生病的母亲。",opts:["伺候","侍候"],ans:0,tip:"「伺候」是在人身边供使唤、照料；「侍候」是陪伴服侍，较书面。"},
-  {q:"老人需要有人__。",opts:["伺候","侍候"],ans:0,tip:"日常照料用「伺候」更常见。"},
-
-  // ── 品位 / 品味 ──
-  {q:"她的着装很有__。",opts:["品位","品味"],ans:0,tip:"「品位」指品质、档次、格调；「品味」是尝试滋味、体会欣赏。"},
-  {q:"细细__这首诗的韵味。",opts:["品位","品味"],ans:1,tip:"细细体会、欣赏用「品味」。"},
-
-  // ── 声明 / 申明 ──
-  {q:"外交部发表严正__。",opts:["声明","申明"],ans:0,tip:"「声明」是公开表明态度、立场或说明真相；「申明」是郑重说明、陈述。"},
-  {q:"他再次__了自己的立场。",opts:["声明","申明"],ans:1,tip:"郑重说明、陈述理由用「申明」。"},
-
-  // ── 包含 / 包涵 ──
-  {q:"这句话__了深刻的哲理。",opts:["包含","包涵"],ans:0,tip:"「包含」是里边含有；「包涵」是客套话，请人原谅。"},
-  {q:"招待不周，请多__。",opts:["包含","包涵"],ans:1,tip:"请人原谅用「包涵」。"},
-
-  // ── 厉害 / 利害 ──
-  {q:"他这个人真的很__，什么都懂。",opts:["厉害","利害"],ans:0,tip:"「厉害」是难以对付、剧烈、凶猛；「利害」是利益和损害。"},
-  {q:"做决定之前要考虑__关系。",opts:["厉害","利害"],ans:1,tip:"利益和损害的关系用「利害」。"},
-
-  // ── 启发 / 启示 ──
-  {q:"这道题给了我很大的__。",opts:["启发","启示"],ans:0,tip:"「启发」侧重通过事例让人产生联想而领悟；「启示」侧重直接揭示道理。"},
-  {q:"《伊索寓言》给人们以深刻的__。",opts:["启发","启示"],ans:1,tip:"揭示的深刻道理用「启示」。"},
-
-  // ── 侦察 / 侦查 ──
-  {q:"公安机关对此案展开立案__。",opts:["侦察","侦查"],ans:1,tip:"「侦查」是法律术语，指公安机关、检察院的专门调查；「侦察」是军事上的察看敌情。"},
-  {q:"无人机执行军事__任务。",opts:["侦察","侦查"],ans:0,tip:"军事上察看敌情、地形用「侦察」。"},
-
-  // ── 实验 / 试验 ──
-  {q:"科学家在实验室做__。",opts:["实验","试验"],ans:0,tip:"「实验」是为了检验某种科学理论或假设而进行的操作；「试验」是为了查看某事的结果或性能而进行的尝试。"},
-  {q:"新产品需要经过多次__才能上市。",opts:["实验","试验"],ans:1,tip:"测试产品性能用「试验」。"},
-
-  // ── 未必 / 未免 ──
-  {q:"有钱__就幸福。",opts:["未必","未免"],ans:0,tip:"「未必」是不一定；「未免」是对某种情况不以为然。"},
-  {q:"你这要求__太高了吧。",opts:["未必","未免"],ans:1,tip:"表示不以为然，语气委婉，用「未免」。"},
-
-  // ── 再 / 又 ──
-  {q:"我__也不想看到他了。",opts:["再","又"],ans:0,tip:"「再」多用于未发生的重复；「又」多用于已发生的重复。"},
-  {q:"他昨天__迟到了。",opts:["再","又"],ans:1,tip:"已经发生的重复用「又」。"},
-
-  // ── 对 / 对于 ──
-  {q:"__这个问题，大家还有什么意见？",opts:["对","对于"],ans:1,tip:"「对于」多用于句首，引出对象；「对」用法更广。"},
-  {q:"他__我说了很多心里话。",opts:["对","对于"],ans:0,tip:"当对象是人且是具体的「告诉」对象时，只能用「对」。"},
-
-  // ── 往往 / 常常 ──
-  {q:"成功__属于有准备的人。",opts:["往往","常常"],ans:0,tip:"「往往」是对规律的总结，带有一定规律性；「常常」是频率高。"},
-  {q:"我__去那家餐厅吃饭。",opts:["往往","常常"],ans:1,tip:"表示频率高用「常常」。"},
-
-  // ── 毕竟 / 究竟 ──
-  {q:"他__还年轻，有些事不懂。",opts:["毕竟","究竟"],ans:0,tip:"「毕竟」强调事物的本质或最终结论；「究竟」用于追问。"},
-  {q:"事情__是怎样发生的？",opts:["毕竟","究竟"],ans:1,tip:"追根问底用「究竟」。"},
-
-  // ── 逐步 / 逐渐 ──
-  {q:"我们要__推进各项改革。",opts:["逐步","逐渐"],ans:0,tip:"「逐步」强调一步一步地，有主观意识；「逐渐」强调渐渐，偏客观描述。"},
-  {q:"天色__暗了下来。",opts:["逐步","逐渐"],ans:1,tip:"客观的渐变过程用「逐渐」。"},
-
-  // ── 关于 / 对于 ──
-  {q:"__环境保护，政府出台了一系列政策。",opts:["关于","对于"],ans:0,tip:"「关于」引出关联的范围或事物；「对于」引出对象。"},
-  {q:"__困难群众，要给予更多关怀。",opts:["关于","对于"],ans:1,tip:"引出对象用「对于」。"},
-
-  // ── 持续 / 继续 ──
-  {q:"高温天气还将__一段时间。",opts:["持续","继续"],ans:0,tip:"「持续」是保持、不间断；「继续」是接着做，中间可以间断。"},
-  {q:"休息好了，我们__干活吧。",opts:["持续","继续"],ans:1,tip:"中断后的接续用「继续」。"},
-
-  // ── 扩张 / 扩展 ──
-  {q:"企业盲目__容易导致资金链断裂。",opts:["扩张","扩展"],ans:0,tip:"「扩张」是扩大（势力、疆土等），常含过度之意；「扩展」是向外延伸、扩大范围。"},
-  {q:"我们要不断__知识面。",opts:["扩张","扩展"],ans:1,tip:"扩大范围用「扩展」。"},
-
-  // ── 撤销 / 取消 ──
-  {q:"他的处分被__了。",opts:["撤销","取消"],ans:0,tip:"「撤销」多用于正式的、已生效的决定、处分、资格等；「取消」用于计划、活动等。"},
-  {q:"因天气原因__了今天的运动会。",opts:["撤销","取消"],ans:1,tip:"使原有的安排不再进行用「取消」。"},
-
-  // ── 扶养 / 抚养 ──
-  {q:"父母有__子女的义务。",opts:["扶养","抚养"],ans:1,tip:"「抚养」是长辈对晚辈的养育；「扶养」是平辈之间的相互扶持供养。"},
-  {q:"夫妻之间有相互__的义务。",opts:["扶养","抚养"],ans:0,tip:"平辈之间的供养用「扶养」。"},
-
-  // ── 濒临 / 面临 ──
-  {q:"这家公司__破产的边缘。",opts:["濒临","面临"],ans:0,tip:"「濒临」是紧靠着、临近（多用于不好事物如破产、灭绝）；「面临」是面前遇到。"},
-  {q:"我们__着严峻的挑战。",opts:["濒临","面临"],ans:1,tip:"面前遇到（问题、挑战等）用「面临」。"},
-
-  // ── 修饰 / 粉饰 ──
-  {q:"这篇文章还需要进一步__。",opts:["修饰","粉饰"],ans:0,tip:"「修饰」是修整装饰使美观（中性）；「粉饰」是美化表面掩盖问题（含贬义）。"},
-  {q:"不要试图__太平，要解决实际问题。",opts:["修饰","粉饰"],ans:1,tip:"美化表面、掩盖问题，含贬义，用「粉饰」。"},
-
-  // ── 沟通 / 勾通 ──
-  {q:"加强家校__，共同培养学生。",opts:["沟通","勾通"],ans:0,tip:"「沟通」是使双方能通连，中性或褒义；「勾通」是暗中勾结串通，贬义。"},
-  {q:"他勾结外人，暗中__，损害公司利益。",opts:["沟通","勾通"],ans:1,tip:"暗中勾结串通用「勾通」，含贬义。"},
+const Q=[
+{q:"我们__了四川雅砻江谷地的水利工程。",o:["考察","考查","考核"],a:0,t:"「考察」是实地观察调查；「考查」是按标准检查衡量；「考核」是审核查对，多用于人事。"},
+{q:"学校每学期都会严格__学生的学业成绩。",o:["考察","考查","考核"],a:1,t:"按标准检查衡量成绩，用「考查」。"},
+{q:"祖冲之经过认真的实际__，推翻了前人的错误结论。",o:["考察","考查","考核"],a:2,t:"审核、核对、查对用「考核」。"},
+{q:"这种情况，他已经实地__过了。",o:["考问","拷问"],a:0,t:"「考问」是考察询问；「拷问」是拷打审问，含暴力。"},
+{q:"在严刑__面前，他只好屈招了供。",o:["考问","拷问"],a:1,t:"拷打审问用「拷问」。"},
+{q:"我们__了三年自然灾害带来的巨大困难。",o:["克服","克复"],a:0,t:"「克服」是用意志战胜困难/缺点；「克复」是武力夺回失地。"},
+{q:"人民解放军__洛阳，粉碎了敌人的封锁。",o:["克服","克复"],a:1,t:"用武力夺回被占领的地方用「克复」。"},
+{q:"战士们夜以继日地奋战，简直__极了。",o:["渴睡","瞌睡"],a:0,t:"「渴睡」是极度困倦、急需睡觉（程度重）；「瞌睡」是困倦打盹（状态轻）。"},
+{q:"他一上课就打__，听不进老师讲课。",o:["渴睡","瞌睡"],a:1,t:"困倦打盹用「瞌睡」。"},
+{q:"他忍受了半辈子的__，三天三夜也说不完。",o:["苦楚","苦处"],a:0,t:"「苦楚」侧重生活受折磨的主观痛苦感受；「苦处」侧重所受痛苦的客观所在。"},
+{q:"这是先生的__，也是先生的好处，旁人无法体会。",o:["苦楚","苦处"],a:1,t:"痛苦的所在或根源用「苦处」。"},
+{q:"他指着自己的名牌衣料__不止。",o:["夸示","夸饰"],a:0,t:"「夸示」是向人炫耀自己的东西/长处；「夸饰」是夸张地描绘事物。"},
+{q:"他在文章里大事__那里的情景。",o:["夸示","夸饰"],a:1,t:"夸张地描绘用「夸饰」。"},
+{q:"我国政府代表团访问朝鲜，受到了盛情__。",o:["款待","宽大","宽贷"],a:0,t:"「款待」是优厚招待；「宽大」是从宽处理；「宽贷」是宽容饶恕。"},
+{q:"对于主动投降的敌人，我们采取__政策。",o:["款待","宽大","宽贷"],a:1,t:"从宽处理用「宽大」。"},
+{q:"对愿意改正的同志，要给予__。",o:["款待","宽大","宽贷"],a:2,t:"宽容、饶恕用「宽贷」。"},
+{q:"今日得__，终于可以好好休息了。",o:["宽馀","宽裕"],a:0,t:"「宽馀」侧重抽象事物的舒畅宽绰；「宽裕」侧重经济上的宽绰富裕。"},
+{q:"新政策颁布后，这里的农民逐步__起来了。",o:["宽馀","宽裕"],a:1,t:"经济上宽绰富裕用「宽裕」。"},
+{q:"少年儿童如果贪玩，就会__学业。",o:["旷废","旷费"],a:0,t:"「旷废」是耽误、荒废；「旷费」是浪费。"},
+{q:"做事要高效，不能__时间。",o:["旷废","旷费"],a:1,t:"浪费（时间等）用「旷费」。"},
+{q:"上海地方那么大，__你不知道他的地址，怎么找到他？",o:["况且","何况","而且"],a:0,t:"「况且」追加理由，表递进；「何况」用反问表递进；「而且」表一般递进。"},
+{q:"他连最基本的字都不认识，更__写文章了。",o:["况且","何况","而且"],a:1,t:"用反问语气表递进，用「何况」。"},
+{q:"产品质量提高了，款式新颖了，__包装也精美了。",o:["况且","何况","而且"],a:2,t:"表进一步，常与「不但」呼应，用「而且」。"},
+{q:"我们要严格__项目的成本预算。",o:["控制","抑制","克制"],a:0,t:"「控制」指掌握住不使越界；「抑制」指压下去；「克制」专指抑制情感。"},
+{q:"他__不住内心的喜悦，忽地站起来大呼。",o:["控制","抑制","克制"],a:1,t:"压下去（情绪、生理等）用「抑制」。"},
+{q:"面对挑衅，他始终采取__的态度。",o:["控制","抑制","克制"],a:2,t:"抑制情感用「克制」。"},
+{q:"商场营业额一直很低，__得做做市场调查。",o:["看来","可见"],a:0,t:"「看来」是主观推测；「可见」是由事实推导出结论。"},
+{q:"由此__，这次事故是思想麻痹造成的。",o:["看来","可见"],a:1,t:"由事实推导出结论用「可见」。"},
+{q:"我们要不断__新的业务领域。",o:["开拓","开辟"],a:0,t:"「开拓」是从小到大发展、扩大；「开辟」是从无到有打开新路径。"},
+{q:"北京航空公司又__了几条新航线。",o:["开拓","开辟"],a:1,t:"从无到有开创用「开辟」。"},
+{q:"小张待人是__的，但执行制度特别严格。",o:["宽厚","忠厚"],a:0,t:"「宽厚」是待人宽大厚道；「忠厚」是性情忠实厚道。"},
+{q:"他是个__老实的人，从来不说假话。",o:["宽厚","忠厚"],a:1,t:"性情忠实厚道用「忠厚」。"},
+{q:"华盛顿等地警方__加强了安全戒备。",o:["刻意","蓄意","特意"],a:0,t:"「刻意」是用尽心思（褒）；「蓄意」是早有坏心思（贬）；「特意」是特地（中性）。"},
+{q:"某国一再__制造事端，企图引发军事冲突。",o:["刻意","蓄意","特意"],a:1,t:"早有坏意图用「蓄意」（贬义）。"},
+{q:"这块衣料是他__托人从上海买来送给你的。",o:["刻意","蓄意","特意"],a:2,t:"特地、专为某事用「特意」。"},
+{q:"相比薪酬，他们更__用人单位的发展空间。",o:["看重","看中"],a:0,t:"「看重」是重视、认为重要；「看中」是看了感到合意、满意。"},
+{q:"你__哪个就买哪个，不用犹豫。",o:["看重","看中"],a:1,t:"看了感到合意用「看中」。"},
+{q:"第二种是一位普通高中生的__。",o:["看法","管见"],a:0,t:"「看法」是普通见解；「管见」是谦辞，自谦浅陋的见识。"},
+{q:"以上只是我的__，仅供大家参考。",o:["看法","管见"],a:1,t:"自谦见识浅陋用「管见」。"},
+{q:"他花了十年时间__这部古籍的讹误。",o:["考订","考证"],a:0,t:"「考订」是考据并订正错误；「考证」是考核证实、说明问题。"},
+{q:"我们不赞成在文献的__中无目的地转圈子。",o:["考订","考证"],a:1,t:"根据资料考核证实用「考证」。"},
+{q:"他又把老师和同学们__的劝告忘得一干二净。",o:["苦口婆心","语重心长"],a:0,t:"「苦口婆心」是再三恳切劝告；「语重心长」是言辞诚恳、情意深长。"},
+{q:"老师__地叮嘱我们，要珍惜学习时光。",o:["苦口婆心","语重心长"],a:1,t:"言辞诚恳、情意深长用「语重心长」。"},
+{q:"这部小说成功__了一个鲜活的人物形象。",o:["刻画","刻划"],a:0,t:"用文字、画面描写塑造用「刻画」。除雕刻行为外统一用「刻画」。"},
+{q:"工匠在石碑上__了精美的花纹。",o:["刻画","刻划"],a:1,t:"雕刻、刻制的具体动作用「刻划」。"},
+{q:"运动量大，我的心脏就跳得__。",o:["厉害","利害"],a:0,t:"「厉害」是形容词，表猛烈/剧烈；「利害」是名词，表利益与危害。"},
+{q:"同学们之间没有根本的__冲突。",o:["厉害","利害"],a:1,t:"利益和危害的关系用「利害」（名词）。"},
+{q:"这份粮油调拨单需要__盖章才能有效。",o:["粮站","粮栈"],a:0,t:"「粮站」是调拨管理粮食的行政机关；「粮栈」是批发粮店/存粮货栈。"},
+{q:"为方便群众，小区新设了__。",o:["粮站","粮栈"],a:1,t:"经营粮食批发的店铺用「粮栈」。"},
+{q:"我们__三点出发，赶最早的一班火车。",o:["凌晨","零辰"],a:0,t:"「凌晨」是天快亮的时段；「零辰」特指夜里12点整。"},
+{q:"今天夜间__就出发，务必准时集合。",o:["凌晨","零辰"],a:1,t:"夜里12点整用「零辰」。"},
+{q:"他虽然是英国人，但汉语说得很__。",o:["流利","流丽"],a:0,t:"「流利」是说话通畅、动作灵活；「流丽」是诗文/书法流畅华美。"},
+{q:"王先生书法__，深受大家喜爱。",o:["流利","流丽"],a:1,t:"书法流畅华美用「流丽」。"},
+{q:"植树造林，防止水土__。",o:["流失","流逝"],a:0,t:"「流失」是物质/人才散失；「流逝」是时光像流水般消逝。"},
+{q:"时光在不知不觉中__了。",o:["流失","流逝"],a:1,t:"时光消逝用「流逝」。"},
+{q:"孔子对着__的江水感叹：逝者如斯夫，不舍昼夜。",o:["流逝","流泻"],a:0,t:"时光消逝用「流逝」。"},
+{q:"月光从云层中__下来，洒满了大地。",o:["流逝","流泻"],a:1,t:"液体/光线快速流出用「流泻」。"},
+{q:"毕业离校时，大家都十分__这学习过的地方。",o:["留恋","流连"],a:0,t:"「留恋」是不忍舍弃/离开（人/物/地方）；「流连」是留恋不止（多用于景物）。"},
+{q:"这里的风景太美了，让人__忘返。",o:["留恋","流连"],a:1,t:"留恋不止、舍不得离开用「流连」。"},
+{q:"大禹治水的故事一直__到今天。",o:["流传","留传"],a:0,t:"「流传」是事迹/故事传下来或传播开；「留传」是物品传给后代。"},
+{q:"这是白家祖辈__下来的秘方。",o:["流传","留传"],a:1,t:"具体物品遗留给后代用「留传」。"},
+{q:"我专程前来，__你的谆谆教诲。",o:["聆取","领取"],a:0,t:"「聆取」是听取教诲/指示（书面语）；「领取」是取得发放的物品。"},
+{q:"请你赶快去__本月工资。",o:["聆取","领取"],a:1,t:"取得发放的物品用「领取」。"},
+{q:"一个时期以来，__繁体字的现象极其严重。",o:["滥用","乱用","借用","误用"],a:0,t:"「滥用」是过度无节制；「乱用」是胡乱用错对象；「借用」是移作他用；「误用」是不小心用错。"},
+{q:"书写不规范，__自造简化字，便是一个例子。",o:["滥用","乱用","借用","误用"],a:1,t:"胡乱使用、该用甲用了乙用「乱用」。"},
+{q:"'道具'原指法物，现在__来指演戏的器物。",o:["滥用","乱用","借用","误用"],a:2,t:"把原用途的事物移作他用用「借用」。"},
+{q:"他如果不是__了公式，怎么也解不出来。",o:["滥用","乱用","借用","误用"],a:3,t:"不小心用错用「误用」。"},
+{q:"他为人__，一毛不拔，从不肯帮人。",o:["吝啬","吝惜"],a:0,t:"「吝啬」是当用不用（贬义）；「吝惜」是舍不得拿出（中性）。"},
+{q:"他毫不__自己的时间，全力帮助同学。",o:["吝啬","吝惜"],a:1,t:"舍不得拿出（中性）用「吝惜」。"},
+{q:"他被人__罪名，含冤入狱。",o:["罗织","罗致"],a:0,t:"「罗织」是虚构罪名陷害（贬）；「罗致」是搜罗人才（中性/褒）。"},
+{q:"公司多方__专业人才，壮大研发团队。",o:["罗织","罗致"],a:1,t:"延聘、搜罗人才用「罗致」。"},
+{q:"企业经营__、品牌形象对生存发展至关重要。",o:["理念","观念"],a:0,t:"「理念」是思想信念、经营理念；「观念」是思想意识、传统观念。"},
+{q:"我们要破除旧的传统__，勇于创新。",o:["理念","观念"],a:1,t:"思想意识、看法用「观念」。"},
+{q:"__是可以杀人的，中国有句老话叫'人言可畏'。",o:["流言","谎言"],a:0,t:"「流言」是无根据的背后议论/诬蔑；「谎言」是故意说的谎话。"},
+{q:"他的__被当场戳穿，再也无法抵赖。",o:["流言","谎言"],a:1,t:"故意编造的谎话用「谎言」。"},
+{q:"他照顾自己病中的母亲，十分__。",o:["经心","精心"],a:0,t:"「经心」是在意、留心，多用于否定式；「精心」是特别用心、细心。"},
+{q:"护士__照料病人，帮助他们早日康复。",o:["经心","精心"],a:1,t:"特别用心、细心（褒义）用「精心」。"},
+{q:"希望工程捐赠会场上__了很多人。",o:["聚集","聚积"],a:0,t:"「聚集」是集合、凑在一起（人/力量）；「聚积」是一点一滴凑集（实物/资金）。"},
+{q:"三轮车夫将自己__了十年的血汗钱捐了出来。",o:["聚集","聚积"],a:1,t:"一点一滴凑集用「聚积」，多用于实物、资金。"},
+{q:"印巴冲突激烈，国际社会__研究维护和平的对策。",o:["急需","亟须"],a:0,t:"「急需」是紧急需要；「亟须」是紧迫地（必须做）。"},
+{q:"这个问题__解决，不能再拖延了。",o:["急需","亟须"],a:1,t:"紧迫地、必须（做某事）用「亟须」。"},
+{q:"沿海一带常遭台风__。",o:["侵袭","侵蚀"],a:0,t:"「侵袭」是侵入并袭击；「侵蚀」是逐渐侵害变坏或暗中侵占。"},
+{q:"浮躁风气和投机心理__着学术，部分学者急功近利。",o:["侵袭","侵蚀"],a:1,t:"逐渐侵害使变坏用「侵蚀」。"},
+{q:"园内假山造型__，别具一格。",o:["奇巧","精巧"],a:0,t:"「奇巧」是奇特巧妙；「精巧」是精细巧妙。"},
+{q:"水乡小镇，有十来座__的小桥相衔。",o:["奇巧","精巧"],a:1,t:"精细巧妙用「精巧」。"},
+{q:"一个中国__下，两岸可商谈各类问题。",o:["前提","基础"],a:0,t:"「前提」是事物发生或发展的先决条件；「基础」是事物发展的根本或起点。"},
+{q:"在原有的__上提高学习成绩。",o:["前提","基础"],a:1,t:"根本或起点用「基础」。"},
+{q:"高品质作品需要深厚积累才能写出。",o:["品位","品味"],a:0,t:"「品位」是名词，指档次/水平；「品味」是动词，指欣赏/玩味。"},
+{q:"散文文义隽永，值得仔细__。",o:["品位","品味"],a:1,t:"仔细体会、欣赏用「品味」（动词）。"},
+{q:"该同志__端正，值得信任。",o:["品行","品性"],a:0,t:"「品行」指有关道德的行为；「品性」指品格性质。"},
+{q:"他__质朴，深受大家喜爱。",o:["品行","品性"],a:1,t:"品格性质用「品性」。"},
+{q:"激动后心情久久不能__。",o:["平静","平靖"],a:0,t:"「平静」多用于心理活动或自然环境；「平靖」多用于社会秩序安定。"},
+{q:"严打过后，社会一时__下来。",o:["平静","平靖"],a:1,t:"社会秩序安定用「平靖」。"},
+{q:"绿茶需仔细__才能领略妙处。",o:["品尝","品评"],a:0,t:"「品尝」重在辨别滋味（食物）；「品评」重在评论高下。"},
+{q:"专家认真__参赛选手作品。",o:["品尝","品评"],a:1,t:"评论高下用「品评」。"},
+{q:"阅读优秀作品，__语言魅力。",o:["品味","品评","体味"],a:2,t:"「体味」侧重玩味语言/情趣；「品味」侧重欣赏；「品评」侧重评论高下。"},
+{q:"深入群众__生活才能创作。",o:["体验","体会","体味"],a:0,t:"「体验」侧重亲身经历；「体会」侧重领悟理解；「体味」侧重玩味。"},
+{q:"我能__你此刻的心情。",o:["体验","体会","体味"],a:1,t:"体验领会，侧重领悟、理解用「体会」。"},
+{q:"考古学家__甲骨文字。",o:["破译","破解"],a:0,t:"「破译」指识破并译出未知信息（密码/文字）；「破解」指解决难题。"},
+{q:"飞船研制要__三大难题。",o:["破译","破解"],a:1,t:"解决不易解决的问题用「破解」。"},
+{q:"把孩子__成有理想的人。",o:["培养","培植","培育"],a:0,t:"「培养」多用于人/习惯；「培植」多用于植物或权势（贬）；「培育」多用于生物/新生代。"},
+{q:"园林工人__花木美化生活。",o:["培养","培植","培育"],a:1,t:"种植管理植物用「培植」。"},
+{q:"文明建设要__民族品格。",o:["培养","培植","培育"],a:2,t:"使发育、抚养用「培育」。"},
+{q:"克隆人遭到__反对。",o:["普遍","一致"],a:0,t:"「普遍」指范围广、有共性；「一致」指无分歧、一同。"},
+{q:"大家__同意这个方案。",o:["普遍","一致"],a:1,t:"没有分歧、一同用「一致」。"},
+{q:"不法分子蓄意__水利工程。",o:["破坏","损坏"],a:0,t:"「破坏」是有意的，语义重；「损坏」是无意的，语义轻。"},
+{q:"他不小心__教室桌椅。",o:["破坏","损坏"],a:1,t:"无意地使物体受损用「损坏」。"},
+{q:"看书前先读__前言。",o:["评介","评价","评判"],a:0,t:"「评介」是评论介绍；「评价」是评定价值；「评判」是判定是非/优劣。"},
+{q:"《水浒》人物描写广受高度__。",o:["评介","评价","评判"],a:1,t:"评定价值高低用「评价」。"},
+{q:"评委公正__选手表现。",o:["评介","评价","评判"],a:2,t:"判定是非、优劣用「评判」。"},
+{q:"遇旱百姓祭天__龙王降雨。",o:["祈求","乞求"],a:0,t:"「祈求」是恳切希望（多向神/天）；「乞求」是低声下气请求（向人）。"},
+{q:"他__有关部门给予就业机会。",o:["祈求","乞求"],a:1,t:"低声下气请求别人给予，用「乞求」。"},
+{q:"乐团发布征集管弦乐__。",o:["启事","启示"],a:0,t:"「启事」是公开声明的文体（名词）；「启示」是启发领悟（动/名）。"},
+{q:"从发明中受到很大__。",o:["启事","启示"],a:1,t:"启发指示、使有所领悟用「启示」。"},
+{q:"市场监管部门__无照摊贩。",o:["取缔","取消"],a:0,t:"「取缔」是明令禁止（政府对非法事物）；「取消」是失去效力（通用）。"},
+{q:"学校__不合理收费制度。",o:["取缔","取消"],a:1,t:"使原有制度等失去效力用「取消」。"},
+{q:"这个句子有__，易让人误解。",o:["歧义","歧异"],a:0,t:"「歧义」指语言有多种理解；「歧异」指观点有分歧。"},
+{q:"立场不同，对问题认识有__。",o:["歧义","歧异"],a:1,t:"意见、观点有分歧用「歧异」。"},
+{q:"北京奥运会__新会徽吉祥物。",o:["启用","起用"],a:0,t:"「启用」是开始使用（物）；「起用」是重新任用/提拔（人）。"},
+{q:"乡政府__刑满人员当村长不合适。",o:["启用","起用"],a:1,t:"重新任用或提拔人员用「起用」。"},
+{q:"这片森林是鸟类__的家园。",o:["栖息","休憩"],a:0,t:"「栖息」多指鸟类停留休息；「休憩」多指人休息。"},
+{q:"公园是市民休闲__的好去处。",o:["栖息","休憩"],a:1,t:"人休息用「休憩」。"},
+{q:"母亲望着我扔出院的__。",o:["墙角","墙脚"],a:0,t:"「墙角」指两墙相接的角（具体）；「墙脚」指墙的基础，比喻基础（抽象）。"},
+{q:"企业竞争不能互相挖__。",o:["墙角","墙脚"],a:1,t:"墙的基础，比喻基础用「墙脚」。"},
+{q:"案子__三名领导干部。",o:["牵扯","牵掣"],a:0,t:"「牵扯」指牵连有联系；「牵掣」指牵制阻碍。"},
+{q:"__敌军兵力，为主力争取时间。",o:["牵扯","牵掣"],a:1,t:"牵制、阻碍用「牵掣」。"},
+{q:"山间空气__，神清气爽。",o:["清冽","清洌"],a:0,t:"「清冽」是清冷清凉；「清洌」是清澈。"},
+{q:"__泉水从山涧流出。",o:["清冽","清洌"],a:1,t:"清澈用「清洌」。"},
+{q:"找__地方谈话。",o:["清静","清净","清闲"],a:0,t:"「清静」指环境安静，不嘈杂；「清净」指没有打扰；「清闲」指闲暇。"},
+{q:"不带孩子，图耳根__。",o:["清静","清净","清闲"],a:1,t:"没有外来事物打扰用「清净」。"},
+{q:"退休后过着__日子。",o:["清静","清净","清闲"],a:2,t:"清静闲暇用「清闲」。"},
+{q:"这种说法太__，无事实依据。",o:["轻率","草率"],a:0,t:"「轻率」指说话、做事随便（不慎重）；「草率」指做事敷衍（不认真）。"},
+{q:"不能__从事，要认真做好每件事。",o:["轻率","草率"],a:1,t:"做事不认真、敷衍了事用「草率」。"},
+{q:"他对我很有__，困难时帮我。",o:["情义","情意","情谊"],a:0,t:"「情义」指亲友间应有感情；「情意」指对人的感情；「情谊」指相互关切的感情。"},
+{q:"两人__深厚，是多年好友。",o:["情义","情意","情谊"],a:1,t:"对人的感情用「情意」。"},
+{q:"医护与患者结下深厚抗疫__。",o:["情义","情意","情谊"],a:2,t:"相互关切、爱护的感情用「情谊」。"},
+{q:"见__不妙，立即收兵。",o:["情势","情事"],a:0,t:"「情势」指形势趋势；「情事」指情况现象（多用于公文）。"},
+{q:"他详细询问家乡的__。",o:["情势","情事"],a:1,t:"情况、现象用「情事」。"},
+{q:"端午挂荷可__疾病。",o:["祛除","驱除"],a:0,t:"「祛除」指除去疾病/邪魔；「驱除」指赶走入侵的人/物。"},
+{q:"我们要把敌寇__出境。",o:["祛除","驱除"],a:1,t:"赶走、除掉入侵者用「驱除」。"},
+{q:"全国人大是最高__机构。",o:["权力","权利","权限"],a:0,t:"「权力」指强制力量/支配力；「权利」指公民利益；「权限」指职权范围。"},
+{q:"公民有受教育的__。",o:["权力","权利","权限"],a:1,t:"公民依法享有的利益用「权利」。"},
+{q:"证券监管机构部分强制执行__需修改。",o:["权力","权利","权限"],a:2,t:"职权范围用「权限」。"},
+{q:"官场多年，他精通__。",o:["权术","拳术","权数"],a:0,t:"「权术」指权谋（贬义）；「拳术」指武术；「权数」指应变机智（书面）。"},
+{q:"他闯荡武林，__高明。",o:["权术","拳术","权数"],a:1,t:"徒手的武术用「拳术」。"},
+{q:"他胆大心细，遇事不慌，有__。",o:["权术","拳术","权数"],a:2,t:"应变的机智用「权数」。"},
+{q:"经过__，他想通了。",o:["劝解","劝诫"],a:0,t:"「劝解」是劝导宽解/劝架；「劝诫」是劝告改正错误。"},
+{q:"他时时__我进步。",o:["劝解","劝诫"],a:1,t:"劝告人改正缺点错误用「劝诫」。"},
+{q:"先__文明寝室量化指标再考评。",o:["确定","决定"],a:0,t:"「确定」是明确地定下；「决定」是对如何行动作出主张。"},
+{q:"领导__派他深造。",o:["确定","决定"],a:1,t:"对行动作出主张用「决定」。"},
+{q:"抗日斗争中英雄儿女__。",o:["前仆后继","前赴后继"],a:0,t:"「前仆后继」是前面倒下后人跟上（英勇牺牲）；「前赴后继」是前面上去后人跟上（踊跃向前）。"},
+{q:"青年们__投身祖国建设。",o:["前仆后继","前赴后继"],a:1,t:"连续不断踊跃向前用「前赴后继」。"},
+{q:"老师举例__学生思考。",o:["启发","启示"],a:0,t:"「启发」是动词，阐明事理引起联想领悟；「启示」含名词意味，使人领悟。"},
+{q:"鲁迅作品给我们深刻__。",o:["启发","启示"],a:1,t:"启发指示、使有所领悟用「启示」（可作名词）。"},
+{q:"正视自身__，不断改进。",o:["缺点","缺陷"],a:0,t:"「缺点」指不完善的地方（和优点相对）；「缺陷」指欠缺不完备（侧重没有）。"},
+{q:"新软件程序设计存在__。",o:["缺点","缺陷"],a:1,t:"欠缺或不够完备的地方用「缺陷」。"},
+{q:"历史__我们不能因循守旧。",o:["启示","警示"],a:1,t:"「启示」是启发领悟；「警示」是警戒提醒、让人醒悟。"},
+{q:"这本书__我们如何度过一生。",o:["启示","警示"],a:0,t:"启发领悟用「启示」。"},
+{q:"春节__商场促销。",o:["期间","其间"],a:0,t:"「期间」不能单独作状语，前须加修饰语；「其间」可单独作状语。"},
+{q:"在江西六年，教过不少老师，__科研成果显著。",o:["期间","其间"],a:1,t:"某一段时间内（独立作状语）用「其间」。"},
+{q:"世贸组织争端解决程序__。",o:["启动","启用","起动"],a:0,t:"「启动」指机器/程序开始工作；「启用」指开始使用（物）；「起动」指发动。"},
+{q:"公司__新办公系统。",o:["启动","启用","起动"],a:1,t:"开始使用（物）用「启用」。"},
+{q:"按下按钮__发动机。",o:["启动","启用","起动"],a:2,t:"发动、发起用「起动」。"},
+{q:"作家隐居多年__创作。",o:["潜心","专心"],a:0,t:"「潜心」是用心专而深（多用于研究）；「专心」是集中注意力（通用）。"},
+{q:"学习必须__，不能三心二意。",o:["潜心","专心"],a:1,t:"集中注意力用「专心」。"},
+{q:"清查国企资产，防止有人__国有资产。",o:["侵吞","鲸吞"],a:0,t:"「侵吞」是暗中非法占有；「鲸吞」是像鲸鱼一样吞食，比喻吞并土地。"},
+{q:"列强__蚕食，妄图瓜分中国。",o:["侵吞","鲸吞"],a:1,t:"像鲸鱼一样吞食用「鲸吞」，多比喻吞并土地。"},
+{q:"他__不好，遇到烦心事。",o:["情绪","情结"],a:0,t:"「情绪」是临时心理状态；「情结」是深藏心底的感情纠葛。"},
+{q:"商铺利用人们怀旧__打造商业模式。",o:["情绪","情结"],a:1,t:"深藏心底的感情用「情结」。"},
+{q:"开发商__土地政策抬高房价。",o:["曲解","误解"],a:0,t:"「曲解」是故意错误解释（贬义）；「误解」是无意理解错误（中性）。"},
+{q:"你__我的想法。",o:["曲解","误解"],a:1,t:"不正确的理解（无意的）用「误解」。"},
+{q:"俄伊__核燃料供应协议。",o:["签订","签署"],a:0,t:"「签订」指订立合同并签字（通用）；「签署」指重要文件正式签字。"},
+{q:"协议__延期，但核燃料会空运至伊朗。",o:["签订","签署"],a:1,t:"在重要文件上正式签字用「签署」。"},
+{q:"心里的冰雪终于__了。",o:["融化","熔化","溶化"],a:0,t:"「融化」侧重冰雪变水；「熔化」是固体加热变液体；「溶化」是固体在液体中溶解。"},
+{q:"铁加热到1530℃以上会__成铁水。",o:["融化","熔化","溶化"],a:1,t:"固体加热变成液体用「熔化」。"},
+{q:"食盐在水中，很快就__了。",o:["融化","熔化","溶化"],a:2,t:"固体在液体中溶解用「溶化」。"},
+{q:"不同地域的文化在这座城市里相互__，形成独特风貌。",o:["融合","融洽"],a:0,t:"「融合」指多种不同事物合成整体；「融洽」指人与人感情和睦。"},
+{q:"同事们相处__，工作氛围十分轻松。",o:["融合","融洽"],a:1,t:"彼此感情好、无隔阂用「融洽」。"},
+{q:"满腔怨恨仿佛一下都__了。",o:["融解","溶解"],a:0,t:"「融解」指冰雪融化，也可用于抽象情绪消散；「溶解」是化学用语。"},
+{q:"食盐很快就被__在清水里。",o:["融解","溶解"],a:1,t:"化学用语，物质分子均匀分散在液体中用「溶解」。"},
+{q:"主办方强硬地把大家__在一起开展集体活动。",o:["糅合","揉合"],a:0,t:"「糅合」指强行将不适宜的事物混合；「揉合」指用手团弄、揉捏。"},
+{q:"做面食时，要反复__面团，口感才筋道。",o:["糅合","揉合"],a:1,t:"用手团弄、揉捏用「揉合」。"},
+{q:"这件事没能做好，他一直__于心。",o:["内疚","歉疚"],a:0,t:"「内疚」侧重内心深处惭愧不安；「歉疚」侧重觉得对不住他人。"},
+{q:"时隔多年想起这件事，他内心深处仍感到__。",o:["内疚","歉疚"],a:1,t:"觉得对不住别人、因过失感到不安用「歉疚」。"},
+{q:"面对调查，我们要__汇报自己的工作情况。",o:["如实","真实"],a:0,t:"「如实」指按照实际情况表述（侧重行为真实性）；「真实」指与客观事实相符（侧重事物本身属性）。"},
+{q:"这段经历是__的，没有半点编造。",o:["如实","真实"],a:1,t:"与客观事实相符合用「真实」。"},
+{q:"两国领导人__了联合公报。",o:["签订","签署"],a:1,t:"在重要文件上正式签字用「签署」。"},
+{q:"一个中国__下，两岸可以商谈各类问题。",o:["前提","基础"],a:0,t:"先决条件用「前提」。"},
+{q:"产品质量是企业的生存之__。",o:["前提","基础"],a:1,t:"根本用「基础」。"},
+{q:"想要考上公务员，__付出持续的努力。",o:["必须","必需"],a:0,t:"「必须」是副词，强调一定要做；「必需」指不可缺少的。"},
+{q:"水和食物是维持生命的__品。",o:["必须","必需"],a:1,t:"「必需」作定语修饰名词，表示不可缺少的。"},
+{q:"这部电影__了当代年轻人的生活状态。",o:["反映","反应"],a:0,t:"「反映」是把客观事物的实质表现出来；「反应」是受到刺激后作出的回应。"},
+{q:"吃了药之后，身体出现了不良__。",o:["反映","反应"],a:1,t:"机体对外界刺激的回应用「反应」。"},
+{q:"这个寓言故事给了我们深刻的__。",o:["启示","启事"],a:0,t:"「启示」是启发、让人领悟道理；「启事」是公开声明。"},
+{q:"他在报纸上登了一则寻人__。",o:["启示","启事"],a:1,t:"公开的文字告示用「启事」。"},
+{q:"国家__了一系列保护环境的法律法规。",o:["制定","制订"],a:0,t:"「制定」指定出（法律、规程等），强调确定下来；「制订」侧重创制拟定的过程。"},
+{q:"我们正在__下半年的工作计划。",o:["制定","制订"],a:1,t:"还在拟定过程中，尚未最终确定，用「制订」。"},
+{q:"这家公司今年实现了可观的__。",o:["盈利","营利"],a:0,t:"「盈利」是名词，指获得的利润；「营利」是动词，指谋求利润。"},
+{q:"公立医院不以__为目的。",o:["盈利","营利"],a:1,t:"「营利」是动词，指追求利润的行为。"},
+{q:"我们要建设社会主义__国家。",o:["法治","法制"],a:0,t:"「法治」是治理国家的一种方略；「法制」指法律制度本身。"},
+{q:"这条公路__了三个省份。",o:["贯穿","贯串"],a:0,t:"「贯穿」侧重于穿过、连通；「贯串」侧重于串连在一起。"},
+{q:"中央领导到地方__工作。",o:["考察","考查"],a:0,t:"实地观察调查用「考察」；用标准检查衡量用「考查」。"},
+{q:"招聘要求本科及以上__。",o:["学历","学力"],a:0,t:"「学历」指学习的经历；「学力」指学习能力、学问水平。"},
+{q:"他__在一个普通的工人家庭。",o:["出身","出生"],a:1,t:"「出生」指胎儿从母体分离出来；「出身」指由家庭背景决定的社会身份。"},
+{q:"购房时缴纳的__具有担保效力，违约不退还。",o:["定金","订金"],a:0,t:"「定金」是法律概念，有担保效力；「订金」是预付款，一般可退。"},
+{q:"新政策将于明年1月1日起__。",o:["实行","施行"],a:1,t:"「施行」指法令规章从某时起生效；「实行」是用行动来实现。"},
+{q:"这个项目__更多的时间来完成。",o:["需要","须要"],a:0,t:"「需要」是应该有或必须有；「须要」是一定要、必须要。"},
+{q:"他没复习，__考试不及格。",o:["以致","以至"],a:0,t:"「以致」引出不好的结果；「以至」表示延伸或达到某种程度。"},
+{q:"很难__这对双胞胎谁是姐姐。",o:["分辨","分辩"],a:0,t:"「分辨」是区分辨别；「分辩」是为自己辩白、解释。"},
+{q:"报名__日期为本周五。",o:["截止","截至"],a:0,t:"「截止」表示到某一时间停止；「截至」表示到某一时间为止。"},
+{q:"医生仔细__了病人的伤口。",o:["检查","检察"],a:0,t:"「检查」是一般地查看检验；「检察」是法律监督机关的审查活动。"},
+{q:"有人恶意__数据，造成严重损失。",o:["篡改","窜改"],a:0,t:"「篡改」是用作伪的手段改动（贬义）；「窜改」是改动文字。"},
+{q:"我们一起__了一个愉快的周末。",o:["度过","渡过"],a:0,t:"「度过」用于时间；「渡过」用于空间上的横越或比喻度过难关。"},
+{q:"在大家的帮助下，他终于__了难关。",o:["度过","渡过"],a:1,t:"「渡过难关」是固定搭配，用「渡过」。"},
+{q:"合同到期后自动__。",o:["中止","终止"],a:1,t:"「终止」是最终结束、停止；「中止」是中途暂停，可能恢复。"},
+{q:"我们要__正确的人生观和价值观。",o:["树立","竖立"],a:0,t:"「树立」用于抽象的好的事物；「竖立」是具体物体直立起来。"},
+{q:"社会保障制度是人民生活的__。",o:["保障","保证"],a:0,t:"「保障」是保护使不受侵害；「保证」是担保做到。"},
+{q:"我__明天一定完成这个任务。",o:["保障","保证"],a:1,t:"担保、承诺做到用「保证」。"},
+{q:"工厂__了最新的生产工艺。",o:["采用","采纳"],a:0,t:"「采用」指选用（技术、方法等）；「采纳」指接受（意见、建议等）。"},
+{q:"这部作品__了当代社会的多元面貌。",o:["呈现","展现"],a:0,t:"「呈现」是显现出、展示在眼前；「展现」是展示出来让人看到。"},
+{q:"我们有__的理由相信这件事能成功。",o:["充分","充足"],a:0,t:"「充分」多用于抽象事物；「充足」多用于具体事物。"},
+{q:"近年来，中国的高铁技术__迅速。",o:["发展","发达"],a:0,t:"「发展」是动词，指变化过程；「发达」是形容词，指已经充分发展的状态。"},
+{q:"我们要不断__工作方法。",o:["改进","改善"],a:0,t:"「改进」侧重于改变旧的使之进步；「改善」侧重于使原有状况变得更好。"},
+{q:"国家制定了十四五__纲要。",o:["规划","计划"],a:0,t:"「规划」是比较全面的长远发展蓝图；「计划」是较短期的具体安排。"},
+{q:"老师经常__学生多读课外书。",o:["鼓励","鼓舞"],a:0,t:"「鼓励」是激发、勉励（人对人）；「鼓舞」是使人振作（可以是事物）。"},
+{q:"这项研究取得了丰硕的__。",o:["成果","后果","结果"],a:0,t:"「成果」是褒义词，指收获；「后果」多含贬义；「结果」中性。"},
+{q:"这项新技术值得向全国__。",o:["推广","推行"],a:0,t:"「推广」侧重于扩大使用范围；「推行」侧重于推动执行。"},
+{q:"这个地区水资源__。",o:["短缺","缺乏"],a:0,t:"「短缺」多用于具体物资指数量不足；「缺乏」可用于抽象或具体。"},
+{q:"这个消息__了全国。",o:["震动","振动"],a:0,t:"「震动」是使颤动，引申为使人心不平静；「振动」是物理学机械振动。"},
+{q:"他__了这份礼物。",o:["接收","接受"],a:1,t:"「接受」是对事物容纳不拒绝；「接收」是收受、接纳。"},
+{q:"请__一下你是否参加明天的会议。",o:["确定","确认"],a:1,t:"「确认」是进一步核实明确；「确定」是明确而肯定。"},
+{q:"政府__了最新的经济数据。",o:["发布","发表"],a:0,t:"「发布」是公布（新闻、命令等）；「发表」是公开表达。"},
+{q:"老师要正确__学生的学习方向。",o:["引导","导致"],a:0,t:"「引导」是带领、指引（中性或褒义）；「导致」是引起（多含贬义）。"},
+{q:"要完善市场监督__。",o:["机制","体制"],a:0,t:"「机制」是系统内部组织和运行的规律/方式；「体制」是组织制度、体系结构。"},
+{q:"要深刻理解这句话的__。",o:["内涵","含义"],a:1,t:"「含义」是词句包含的意义；「内涵」是事物内在的、本质的内容。"},
+{q:"他学习很努力，__周末也不休息。",o:["甚至","尤其"],a:0,t:"「甚至」表示递进，强调更极端的情况；「尤其」表示在同类中更加突出。"},
+{q:"先学好基础，__深入学习专业知识。",o:["从而","进而"],a:1,t:"「进而」表示在前一行动的基础上继续前进；「从而」表示因果关系。"},
+{q:"__天气原因，航班延误了。",o:["因为","由于"],a:1,t:"「由于」多用于书面语、正式场合；「因为」口语化。"},
+{q:"安全问题不容__。",o:["忽视","忽略"],a:0,t:"「忽视」是有意或无意地不重视；「忽略」多指因为疏忽而没有注意到。"},
+{q:"不要总是__责任。",o:["推脱","推托"],a:0,t:"「推脱」是推卸、摆脱（责任等）；「推托」是借故拒绝（邀请等）。"},
+{q:"他的文章__明了，通俗易懂。",o:["简洁","简捷"],a:0,t:"「简洁」是简明扼要；「简捷」是简便快捷。"},
+{q:"丝绸之路__了东西方贸易的新通道。",o:["开拓","开辟"],a:1,t:"从无到有地开创用「开辟」。"},
+{q:"他这个说法太__了，别当真。",o:["夸张","夸大"],a:0,t:"「夸张」是言过其实，常为修辞；「夸大」是把事情说得超过原有程度，多含贬义。"},
+{q:"这个民间故事已经__了好几百年。",o:["流传","留传"],a:0,t:"「流传」是传下来或传播开；「留传」是遗留下来传给后代。"},
+{q:"2024年是孔子__2575周年。",o:["诞生","诞辰"],a:1,t:"「诞辰」是生日（用于所尊敬的人）；「诞生」是出生（动词）。"},
+{q:"两会期间，代表们共商__。",o:["国是","国事"],a:0,t:"「国是」指国家大计、大政方针；「国事」指国家的事务。"},
+{q:"我们__了下周的酒店。",o:["预定","预订"],a:1,t:"「预订」是预先订购、订租；「预定」是预先规定或约定。"},
+{q:"周末去朋友家__。",o:["做客","作客"],a:0,t:"「做客」是到别人家拜访；「作客」是在外地寄居。"},
+{q:"不法商家__暴利。",o:["谋取","牟取"],a:1,t:"「谋取」是设法取得（中性）；「牟取」是非法或不正当地获取（贬义）。"},
+{q:"这个事实不容__。",o:["质疑","置疑"],a:1,t:"「质疑」是提出疑问；「置疑」是怀疑（多用于否定式）。"},
+{q:"春天来了，冰雪开始__。",o:["溶化","融化","熔化"],a:1,t:"冰雪变成水用「融化」；「溶化」是固体在液体中溶解；「熔化」是固体加热变液体。"},
+{q:"山洪__，冲毁了道路。",o:["暴发","爆发"],a:0,t:"「暴发」多用于洪水、传染病等突然发生；「爆发」多用于火山、革命、战争等。"},
+{q:"闯红灯是__交通规则的行为。",o:["违反","违犯"],a:0,t:"「违反」是不遵守规则纪律；「违犯」是触犯法律，程度更重。"},
+{q:"刚开始学，犯点错是__的。",o:["难免","不免"],a:0,t:"「难免」是不容易避免；「不免」是免不了、不能不说是。"},
+{q:"你这样说__太苛刻了。",o:["未免","难免"],a:0,t:"「未免」表示不以为然，语气较委婉；「难免」是不易避免。"},
+{q:"我__允许这样的事情再次发生。",o:["绝不","决不"],a:0,t:"「绝不」是「绝对不」，强调彻底否定；「决不」是「坚决不」，强调决心。"},
+{q:"她的着装很有__。",o:["品位","品味"],a:0,t:"「品位」指品质、档次、格调；「品味」是尝试滋味、体会欣赏。"},
+{q:"外交部发表严正__。",o:["声明","申明"],a:0,t:"「声明」是公开表明态度立场；「申明」是郑重说明、陈述。"},
+{q:"这句话__了深刻的哲理。",o:["包含","包涵"],a:0,t:"「包含」是里边含有；「包涵」是客套话，请人原谅。"},
+{q:"公安机关对此案展开立案__。",o:["侦察","侦查"],a:1,t:"「侦查」是法律术语，指专门调查；「侦察」是军事上察看敌情。"},
+{q:"科学家在实验室做__。",o:["实验","试验"],a:0,t:"「实验」是检验科学理论的操作；「试验」是查看结果或性能的尝试。"},
+{q:"有钱__就幸福。",o:["未必","未免"],a:0,t:"「未必」是不一定；「未免」是对某种情况不以为然。"},
+{q:"我__也不想看到他了。",o:["再","又"],a:0,t:"「再」多用于未发生的重复；「又」多用于已发生的重复。"},
+{q:"__这个问题，大家还有什么意见？",o:["对","对于"],a:1,t:"「对于」多用于句首引出对象；「对」用法更广。"},
+{q:"成功__属于有准备的人。",o:["往往","常常"],a:0,t:"「往往」是对规律的总结；「常常」是频率高。"},
+{q:"他__还年轻，有些事不懂。",o:["毕竟","究竟"],a:0,t:"「毕竟」强调事物的本质或最终结论；「究竟」用于追问。"},
+{q:"我们要__推进各项改革。",o:["逐步","逐渐"],a:0,t:"「逐步」强调一步一步有主观意识；「逐渐」强调渐渐偏客观描述。"},
+{q:"__环境保护，政府出台了一系列政策。",o:["关于","对于"],a:0,t:"「关于」引出关联的范围或事物；「对于」引出对象。"},
+{q:"高温天气还将__一段时间。",o:["持续","继续"],a:0,t:"「持续」是保持、不间断；「继续」是接着做，中间可以间断。"},
+{q:"企业盲目__容易导致资金链断裂。",o:["扩张","扩展"],a:0,t:"「扩张」是扩大（势力、疆土等）；「扩展」是向外延伸、扩大范围。"},
+{q:"他的处分被__了。",o:["撤销","取消"],a:0,t:"「撤销」多用于正式决定、处分等；「取消」用于计划、活动等。"},
+{q:"父母有__子女的义务。",o:["扶养","抚养"],a:1,t:"「抚养」是长辈对晚辈的养育；「扶养」是平辈之间的相互扶持供养。"},
+{q:"这家公司__破产的边缘。",o:["濒临","面临"],a:0,t:"「濒临」是紧靠着、临近（多用于不好事物）；「面临」是面前遇到。"},
+{q:"这篇文章还需要进一步__。",o:["修饰","粉饰"],a:0,t:"「修饰」是修整装饰使美观（中性）；「粉饰」是美化表面掩盖问题（含贬义）。"},
+{q:"加强家校__，共同培养学生。",o:["沟通","勾通"],a:0,t:"「沟通」是使双方能通连（中性/褒义）；「勾通」是暗中勾结串通（贬义）。"},
 ];
 
-// ===================== 游戏状态 =====================
-const TOTAL_QUESTIONS = 20;
-const TIME_PER_Q = 12;
-const BASE_SCORE = 100;
-const TIME_BONUS_MAX = 50;
-const COMBO_BONUS = 20;
-
-let state = { mode:null, questions:[], idx:0, score:0, combo:0, maxCombo:0, lives:5, correctCount:0, wrongCount:0, answered:false, timer:null, timeLeft:0 };
-
-function loadStats() {
-  try { return JSON.parse(localStorage.getItem('wordgame_stats') || '{"totalQ":0,"bestCombo":0}'); }
-  catch(e) { return {totalQ:0, bestCombo:0}; }
-}
-function saveStats(s) { localStorage.setItem('wordgame_stats', JSON.stringify(s)); }
-function loadWrongBook() {
-  try { return JSON.parse(localStorage.getItem('wordgame_wrong') || '[]'); }
-  catch(e) { return []; }
-}
-function saveWrongBook(w) { localStorage.setItem('wordgame_wrong', JSON.stringify(w)); }
-
-function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
-function pickRandom(arr,n) { return shuffle(arr).slice(0,Math.min(n,arr.length)); }
-
-function refreshHome() {
-  const stats = loadStats();
-  document.getElementById('statTotal').textContent = stats.totalQ||0;
-  document.getElementById('statBest').textContent = stats.bestCombo||0;
-  document.getElementById('statWrong').textContent = loadWrongBook().length;
-}
-
-function startChallenge() { startGame('challenge'); }
-function startPractice() { startGame('practice'); }
-
-function startGame(mode) {
-  state = { mode, questions:pickRandom(WORD_BANK, TOTAL_QUESTIONS), idx:0, score:0, combo:0, maxCombo:0, lives:mode==='challenge'?5:999, correctCount:0, wrongCount:0, answered:false, timer:null, timeLeft:TIME_PER_Q };
-  showScreen('gameScreen');
-  renderHearts();
-  updateScore();
-  showQuestion();
-}
-
-function showScreen(id) {
-  ['homeScreen','gameScreen','resultScreen','reviewScreen'].forEach(s => document.getElementById(s).classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function renderHearts() {
-  if (state.mode==='practice') { document.getElementById('hearts').innerHTML='<span style="font-size:14px;color:var(--blue);line-height:1.8">∞ 练习模式</span>'; return; }
-  let h=''; for(let i=0;i<5;i++) h+=`<span class="heart${i>=state.lives?' lost':''}">❤️</span>`;
-  document.getElementById('hearts').innerHTML=h;
-}
-
-function updateScore() {
-  document.getElementById('scoreDisplay').textContent=state.score;
-  const cd=document.getElementById('comboDisplay');
-  if(state.combo>=3){cd.textContent=`🔥 ${state.combo}连击! +${COMBO_BONUS*(state.combo-1)}`;cd.className='combo big';setTimeout(()=>cd.className='combo',500);}
-  else if(state.combo>0){cd.textContent=state.combo>=2?`连击 x${state.combo}`:'';cd.className='combo';}
-  else{cd.textContent='';cd.className='combo';}
-}
-
-function showQuestion() {
-  if(state.idx>=state.questions.length) return endGame(true);
-  const q=state.questions[state.idx];
-  state.answered=false; state.timeLeft=TIME_PER_Q;
-  document.getElementById('progressBar').style.width=(state.idx/TOTAL_QUESTIONS*100)+'%';
-  document.getElementById('qNum').textContent=`第 ${state.idx+1}/${TOTAL_QUESTIONS} 题`;
-  document.getElementById('qText').innerHTML=q.q.replace(/__/g,'<span class="blank">______</span>');
-  const qCard=document.getElementById('qCard'); qCard.className='q-card';
-  document.getElementById('explain').className='explain';
-
-  const shuffled=q.opts.map((w,i)=>({w,i})).sort(()=>Math.random()-0.5);
-  document.getElementById('options').innerHTML=shuffled.map((item,idx)=>`<button class="option" data-idx="${idx}" data-correct="${item.i===q.ans}" data-word="${item.w}">${item.w}</button>`).join('');
-  document.querySelectorAll('#options .option').forEach(btn=>{btn.addEventListener('click',()=>handleAnswer(btn));});
-
-  document.onkeydown=function(e){
-    if(state.answered){if(e.key==='Enter'||e.key===' '){nextQuestion();e.preventDefault();}return;}
-    const key=parseInt(e.key);
-    if(key>=1&&key<=shuffled.length){const btn=document.querySelectorAll('#options .option')[key-1];if(btn)handleAnswer(btn);}
-  };
-  startTimer();
-}
-
-function startTimer(){
-  clearInterval(state.timer);
-  const fill=document.getElementById('timerFill'); fill.style.width='100%'; fill.className='fill';
-  const startTime=Date.now(), totalMs=TIME_PER_Q*1000;
-  state.timer=setInterval(()=>{
-    const remaining=Math.max(0,totalMs-(Date.now()-startTime));
-    state.timeLeft=remaining/1000;
-    const pct=remaining/totalMs*100;
-    fill.style.width=pct+'%';
-    if(pct<30)fill.className='fill danger'; else if(pct<55)fill.className='fill warning';
-    if(remaining<=0){clearInterval(state.timer);if(!state.answered)timeUp();}
-  },100);
-}
-
-function timeUp(){
-  if(state.answered)return;
-  state.answered=true; clearInterval(state.timer);
-  const q=state.questions[state.idx];
-  document.querySelectorAll('#options .option').forEach(btn=>{btn.classList.add('disabled');if(btn.dataset.correct==='true')btn.classList.add('show-correct');});
-  state.combo=0; state.wrongCount++; updateScore();
-  document.getElementById('qCard').classList.add('wrong');
-  if(state.mode==='challenge'){state.lives--;renderHearts();if(state.lives<=0){setTimeout(()=>endGame(false),1200);return;}}
-  addToWrongBook(q);
-  showExplanation(q,true);
-}
-
-function handleAnswer(btn){
-  if(state.answered)return;
-  state.answered=true; clearInterval(state.timer);
-  const isCorrect=btn.dataset.correct==='true';
-  const q=state.questions[state.idx];
-  document.querySelectorAll('#options .option').forEach(b=>{b.classList.add('disabled');if(b.dataset.correct==='true')b.classList.add('show-correct');});
-  const timeBonus=Math.floor((state.timeLeft/TIME_PER_Q)*TIME_BONUS_MAX);
-  const comboBonus=state.combo>=2?COMBO_BONUS*(state.combo-1):0;
-
-  if(isCorrect){
-    state.combo++; state.correctCount++;
-    if(state.combo>state.maxCombo)state.maxCombo=state.combo;
-    state.score+=BASE_SCORE+timeBonus+comboBonus;
-    document.getElementById('qCard').classList.add('correct');
-    btn.classList.add('chosen-correct');
-  }else{
-    state.combo=0; state.wrongCount++;
-    if(state.mode==='challenge'){state.lives--;renderHearts();}
-    document.getElementById('qCard').classList.add('wrong');
-    btn.classList.add('chosen-wrong');
-    addToWrongBook(q);
-  }
-  updateScore();
-  if(state.mode==='challenge'&&state.lives<=0){setTimeout(()=>endGame(false),1200);showExplanation(q,!isCorrect);return;}
-  showExplanation(q,!isCorrect);
-}
-
-function showExplanation(q,showTip){
-  const el=document.getElementById('explain');
-  el.innerHTML=`<div class="tip-label">✅ 正确答案：${q.opts[q.ans]}</div><div class="tip-text">💡 ${q.tip}</div><div class="next-hint">按 Enter 或点击屏幕继续 →</div>`;
-  el.classList.add('show');
-  setTimeout(()=>document.addEventListener('click',function goNext(){document.removeEventListener('click',goNext);nextQuestion();}),200);
-}
-
-function nextQuestion(){
-  state.idx++;
-  if(state.idx>=state.questions.length)endGame(true);
-  else{document.getElementById('explain').classList.remove('show');showQuestion();}
-}
-
-function endGame(completed){
-  clearInterval(state.timer); state.answered=true;
-  const stats=loadStats();
-  stats.totalQ=(stats.totalQ||0)+state.correctCount+state.wrongCount;
-  if(state.maxCombo>(stats.bestCombo||0))stats.bestCombo=state.maxCombo;
-  saveStats(stats);
-
-  const accuracy=state.correctCount+state.wrongCount>0?Math.round(state.correctCount/(state.correctCount+state.wrongCount)*100):0;
-  const emoji=document.getElementById('resultEmoji'),title=document.getElementById('resultTitle'),sub=document.getElementById('resultSub');
-
-  if(state.mode==='challenge'&&state.lives<=0){emoji.textContent='💔';title.textContent='闯关失败';sub.textContent=`答对了 ${state.correctCount} 题`;}
-  else if(accuracy>=90){emoji.textContent='🏆';title.textContent='太厉害了！';sub.textContent=`正确率 ${accuracy}%`;}
-  else if(accuracy>=70){emoji.textContent='👍';title.textContent='表现不错！';sub.textContent=`正确率 ${accuracy}%`;}
-  else if(accuracy>=50){emoji.textContent='📖';title.textContent='还需努力';sub.textContent=`正确率 ${accuracy}%`;}
-  else{emoji.textContent='💪';title.textContent='继续加油';sub.textContent=`正确率 ${accuracy}%`;}
-
-  document.getElementById('resScore').textContent=state.score;
-  document.getElementById('resCorrect').textContent=state.correctCount;
-  document.getElementById('resWrong').textContent=state.wrongCount;
-  document.getElementById('resStreak').textContent=state.maxCombo;
-  showScreen('resultScreen');
-}
-
-function addToWrongBook(q){
-  const book=loadWrongBook();
-  if(!book.some(item=>item.q===q.q&&item.opts.join(',')===q.opts.join(','))){book.push(q);saveWrongBook(book);}
-}
-
-function showReview(){
-  const book=loadWrongBook();
-  const list=document.getElementById('reviewList');
-  if(book.length===0){list.innerHTML='<div class="review-empty"><div class="icon">🎉</div><p>还没有错题，继续保持！</p></div>';}
-  else{list.innerHTML=book.reverse().map((q,i)=>`<div class="review-item"><div class="q">${book.length-i}. ${q.q.replace('__','____')}</div><div class="a">✅ <b>${q.opts[q.ans]}</b></div><div class="tip">💡 ${q.tip}</div></div>`).join('');}
-  showScreen('reviewScreen');
-}
-
-function goHome(){clearInterval(state.timer);refreshHome();showScreen('homeScreen');document.onkeydown=null;}
-function resetData(){if(confirm('确定要清除所有记录和错题本吗？')){localStorage.removeItem('wordgame_stats');localStorage.removeItem('wordgame_wrong');refreshHome();}}
-
-refreshHome();
+const TQ=20,TPQ=12,BS=100,TBM=50,CB=20;
+let S={mode:null,qs:[],i:0,score:0,combo:0,mc:0,lives:5,cc:0,wc:0,ad:!1,timer:null,tl:0};
+function ld(){try{return JSON.parse(localStorage.getItem('wg_s')||'{"tq":0,"bc":0}')}catch(e){return{tq:0,bc:0}}}
+function ss(d){localStorage.setItem('wg_s',JSON.stringify(d))}
+function lw(){try{return JSON.parse(localStorage.getItem('wg_w')||'[]')}catch(e){return[]}}
+function sw(d){localStorage.setItem('wg_w',JSON.stringify(d))}
+function sf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function pr(a,n){return sf(a).slice(0,Math.min(n,a.length))}
+function rh(){const s=ld();document.getElementById('statTotal').textContent=s.tq||0;document.getElementById('statBest').textContent=s.bc||0;document.getElementById('statWrong').textContent=lw().length}
+function sc(){startGame('challenge')}
+function sp(){startGame('practice')}
+function startGame(m){S={mode:m,qs:pr(Q,TQ),i:0,score:0,combo:0,mc:0,lives:m==='challenge'?5:999,cc:0,wc:0,ad:!1,timer:null,tl:TPQ};showScreen('gameScreen');rHearts();uScore();sq()}
+function showScreen(id){['homeScreen','gameScreen','resultScreen','reviewScreen'].forEach(s=>document.getElementById(s).classList.remove('active'));document.getElementById(id).classList.add('active')}
+function rHearts(){if(S.mode==='practice'){document.getElementById('hearts').innerHTML='<span style="font-size:14px;color:var(--blue);line-height:1.8">∞ 练习模式</span>';return}let h='';for(let i=0;i<5;i++)h+=`<span class="heart${i>=S.lives?' lost':''}">❤️</span>`;document.getElementById('hearts').innerHTML=h}
+function uScore(){document.getElementById('scoreDisplay').textContent=S.score;const cd=document.getElementById('comboDisplay');if(S.combo>=3){cd.textContent=`🔥 ${S.combo}连击! +${CB*(S.combo-1)}`;cd.className='combo big';setTimeout(()=>cd.className='combo',500)}else if(S.combo>0){cd.textContent=S.combo>=2?`连击 x${S.combo}`:'';cd.className='combo'}else{cd.textContent='';cd.className='combo'}}
+function sq(){if(S.i>=S.qs.length)return endGame(!0);const q=S.qs[S.i];S.ad=!1;S.tl=TPQ;document.getElementById('progressBar').style.width=(S.i/TQ*100)+'%';document.getElementById('qNum').textContent=`第 ${S.i+1}/${TQ} 题`;document.getElementById('qText').innerHTML=q.q.replace(/__/g,'<span class="blank">______</span>');document.getElementById('qCard').className='q-card';document.getElementById('explain').className='explain';const sh=q.o.map((w,i)=>({w,i})).sort(()=>Math.random()-0.5);document.getElementById('options').innerHTML=sh.map((it,idx)=>`<button class="option" data-idx="${idx}" data-correct="${it.i===q.a}" data-word="${it.w}">${it.w}</button>`).join('');document.querySelectorAll('#options .option').forEach(b=>{b.addEventListener('click',()=>ha(b))});document.onkeydown=function(e){if(S.ad){if(e.key==='Enter'||e.key===' '){nq();e.preventDefault()}return}const k=parseInt(e.key);if(k>=1&&k<=sh.length){const b=document.querySelectorAll('#options .option')[k-1];if(b)ha(b)}};st()}
+function st(){clearInterval(S.timer);const f=document.getElementById('timerFill');f.style.width='100%';f.className='fill';const sT=Date.now(),tM=TPQ*1000;S.timer=setInterval(()=>{const r=Math.max(0,tM-(Date.now()-sT));S.tl=r/1000;const p=r/tM*100;f.style.width=p+'%';if(p<30)f.className='fill danger';else if(p<55)f.className='fill warning';if(r<=0){clearInterval(S.timer);if(!S.ad)tu()}},100)}
+function tu(){if(S.ad)return;S.ad=!0;clearInterval(S.timer);const q=S.qs[S.i];document.querySelectorAll('#options .option').forEach(b=>{b.classList.add('disabled');if(b.dataset.correct==='true')b.classList.add('show-correct')});S.combo=0;S.wc++;uScore();document.getElementById('qCard').classList.add('wrong');if(S.mode==='challenge'){S.lives--;rHearts();if(S.lives<=0){setTimeout(()=>endGame(!1),1200);return}}aw(q);se(q,!0)}
+function ha(b){if(S.ad)return;S.ad=!0;clearInterval(S.timer);const ok=b.dataset.correct==='true';const q=S.qs[S.i];document.querySelectorAll('#options .option').forEach(bt=>{bt.classList.add('disabled');if(bt.dataset.correct==='true')bt.classList.add('show-correct')});const tB=Math.floor((S.tl/TPQ)*TBM);const cB=S.combo>=2?CB*(S.combo-1):0;if(ok){S.combo++;S.cc++;if(S.combo>S.mc)S.mc=S.combo;S.score+=BS+tB+cB;document.getElementById('qCard').classList.add('correct');b.classList.add('chosen-correct')}else{S.combo=0;S.wc++;if(S.mode==='challenge'){S.lives--;rHearts()}document.getElementById('qCard').classList.add('wrong');b.classList.add('chosen-wrong');aw(q)}uScore();if(S.mode==='challenge'&&S.lives<=0){setTimeout(()=>endGame(!1),1200);se(q,!ok);return}se(q,!ok)}
+function se(q,shT){const el=document.getElementById('explain');el.innerHTML=`<div class="tip-label">✅ 正确答案：${q.o[q.a]}</div><div class="tip-text">💡 ${q.t}</div><div class="next-hint">按 Enter 或点击屏幕继续 →</div>`;el.classList.add('show');setTimeout(()=>document.addEventListener('click',function gn(){document.removeEventListener('click',gn);nq()}),200)}
+function nq(){S.i++;if(S.i>=S.qs.length)endGame(!0);else{document.getElementById('explain').classList.remove('show');sq()}}
+function endGame(comp){clearInterval(S.timer);S.ad=!0;const stats=ld();stats.tq=(stats.tq||0)+S.cc+S.wc;if(S.mc>(stats.bc||0))stats.bc=S.mc;ss(stats);const acc=S.cc+S.wc>0?Math.round(S.cc/(S.cc+S.wc)*100):0;const em=document.getElementById('resultEmoji'),ti=document.getElementById('resultTitle'),su=document.getElementById('resultSub');if(S.mode==='challenge'&&S.lives<=0){em.textContent='💔';ti.textContent='闯关失败';su.textContent=`答对了 ${S.cc} 题`}else if(acc>=90){em.textContent='🏆';ti.textContent='太厉害了！';su.textContent=`正确率 ${acc}%`}else if(acc>=70){em.textContent='👍';ti.textContent='表现不错！';su.textContent=`正确率 ${acc}%`}else if(acc>=50){em.textContent='📖';ti.textContent='还需努力';su.textContent=`正确率 ${acc}%`}else{em.textContent='💪';ti.textContent='继续加油';su.textContent=`正确率 ${acc}%`}document.getElementById('resScore').textContent=S.score;document.getElementById('resCorrect').textContent=S.cc;document.getElementById('resWrong').textContent=S.wc;document.getElementById('resStreak').textContent=S.mc;showScreen('resultScreen')}
+function aw(q){const b=lw();if(!b.some(it=>it.q===q.q&&it.o.join(',')===q.o.join(','))){b.push(q);sw(b)}}
+function showReview(){const b=lw();const l=document.getElementById('reviewList');if(b.length===0){l.innerHTML='<div class="review-empty"><div class="icon">🎉</div><p>还没有错题，继续保持！</p></div>'}else{l.innerHTML=b.reverse().map((q,i)=>`<div class="review-item"><div class="q">${b.length-i}. ${q.q.replace(/__/g,'____')}</div><div class="a">✅ <b>${q.o[q.a]}</b></div><div class="tip">💡 ${q.t}</div></div>`).join('')}showScreen('reviewScreen')}
+function goHome(){clearInterval(S.timer);rh();showScreen('homeScreen');document.onkeydown=null}
+function resetData(){if(confirm('确定要清除所有记录和错题本吗？此操作不可恢复！')){localStorage.removeItem('wg_s');localStorage.removeItem('wg_w');rh()}}
+rh();
 </script>
 </body>
 </html>
